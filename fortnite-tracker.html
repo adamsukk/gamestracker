@@ -202,6 +202,83 @@
     .lb-sort-btn.active { background: rgba(124,58,237,0.2); color: var(--purple-light); border-color: var(--purple); }
     .lb-empty { text-align: center; padding: 48px; color: var(--text-muted); font-size: 14px; }
 
+    /* ─── ITEM SHOP ─── */
+    .shop-date { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+    .shop-section { margin-bottom: 36px; }
+    .shop-section-title { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
+    .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .shop-card {
+      background: var(--bg-card); border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--border-soft); display: flex; flex-direction: column;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .shop-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .shop-card.rarity-common    { border-color: rgba(176,176,176,0.35); }
+    .shop-card.rarity-uncommon  { border-color: rgba(96,192,64,0.35); }
+    .shop-card.rarity-rare      { border-color: rgba(73,160,228,0.35); }
+    .shop-card.rarity-epic      { border-color: rgba(169,88,214,0.35); }
+    .shop-card.rarity-legendary { border-color: rgba(244,168,0,0.5); }
+    .shop-card.rarity-mythic    { border-color: rgba(255,190,0,0.5); }
+    .shop-card.rarity-icon      { border-color: rgba(84,200,240,0.4); }
+    .shop-img-wrap { position: relative; width: 100%; padding-top: 100%; background: var(--bg-card2); overflow: hidden; }
+    .shop-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .shop-img-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 36px; opacity: 0.3; }
+    .shop-rarity-bar { height: 3px; width: 100%; }
+    .rarity-bar-common    { background: #b0b0b0; }
+    .rarity-bar-uncommon  { background: #60c040; }
+    .rarity-bar-rare      { background: #49a0e4; }
+    .rarity-bar-epic      { background: #a958d6; }
+    .rarity-bar-legendary { background: linear-gradient(90deg, #f4a800, #f4d000); }
+    .rarity-bar-mythic    { background: linear-gradient(90deg, #ffbe00, #fff200); }
+    .rarity-bar-icon      { background: #54c8f0; }
+    .rarity-bar-gaminglegends { background: #6f33a3; }
+    .rarity-bar-shadow    { background: #666; }
+    .rarity-bar-frozen    { background: #aadcff; }
+    .rarity-bar-lava      { background: #e1431c; }
+    .rarity-bar-dark      { background: #c020a0; }
+    .rarity-bar-slurp     { background: #00c3e3; }
+    .rarity-bar-dc        { background: #344f7a; }
+    .rarity-bar-starwars  { background: #ffd700; }
+    .shop-info { padding: 10px 10px 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .shop-bundle { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--purple-mid); margin-bottom: 2px; }
+    .shop-name { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #fff; line-height: 1.2; }
+    .shop-type { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    .shop-price { margin-top: auto; padding-top: 8px; display: flex; align-items: center; gap: 5px; font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--blue); }
+    .shop-price svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .shop-price.price-sale { color: var(--green); }
+    .shop-price-orig { font-size: 11px; color: var(--text-muted); text-decoration: line-through; }
+    @media (max-width: 700px) { .shop-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); } }
+    @media (max-width: 480px) { .shop-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); } }
+
+    /* ─── MAP ─── */
+    .map-layout { display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
+    .map-img-wrap {
+      position: relative; background: var(--bg-card); border-radius: 14px;
+      border: 1px solid var(--border-soft); overflow: hidden;
+      cursor: zoom-in;
+    }
+    .map-img-wrap.zoomed { cursor: zoom-out; }
+    .map-img-wrap img { width: 100%; display: block; transition: transform 0.25s; transform-origin: var(--ox,50%) var(--oy,50%); }
+    .map-img-wrap.zoomed img { transform: scale(2.5); }
+    .map-sidebar { display: flex; flex-direction: column; gap: 10px; }
+    .map-sidebar-title { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+    .map-search { width: 100%; height: 34px; padding: 0 12px; background: var(--bg-card2); border: 1px solid var(--border-soft); border-radius: 8px; color: var(--text); font-family: var(--font-ui); font-size: 13px; outline: none; transition: border-color 0.15s; }
+    .map-search:focus { border-color: var(--purple); }
+    .map-search::placeholder { color: var(--text-muted); }
+    .map-poi-list { flex: 1; overflow-y: auto; max-height: 60vh; display: flex; flex-direction: column; gap: 3px; }
+    .map-poi-list::-webkit-scrollbar { width: 4px; }
+    .map-poi-list::-webkit-scrollbar-track { background: transparent; }
+    .map-poi-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .map-poi-item {
+      padding: 7px 10px; border-radius: 7px; font-size: 13px; font-weight: 500;
+      color: var(--text-dim); cursor: pointer; transition: all 0.12s;
+      border: 1px solid transparent;
+    }
+    .map-poi-item:hover { background: rgba(124,58,237,0.10); color: var(--text); }
+    .map-poi-item.active { background: rgba(124,58,237,0.18); color: var(--purple-light); border-color: rgba(124,58,237,0.35); }
+    .map-poi-count { font-size: 11px; color: var(--text-muted); margin-left: 4px; font-weight: 400; }
+    @media (max-width: 900px) { .map-layout { grid-template-columns: 1fr; } .map-poi-list { max-height: 200px; } }
+
     /* ─── LOADING / ERROR ─── */
     .loading-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40vh; gap: 16px; }
     .spinner { width: 38px; height: 38px; border-radius: 50%; border: 3px solid var(--border-soft); border-top-color: var(--purple); animation: spin 0.8s linear infinite; }
@@ -266,6 +343,8 @@
   <button class="tab-btn active" data-tab="stats">Stats</button>
   <button class="tab-btn" data-tab="events">Events</button>
   <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
+  <button class="tab-btn" data-tab="shop">Item Shop</button>
+  <button class="tab-btn" data-tab="map">Map</button>
 </div>
 
 <!-- MAIN -->
@@ -295,6 +374,20 @@
   <div id="tabEvents" style="display:none">
     <div id="eventsArea">
       <div class="loading-screen"><div class="spinner"></div><div class="loading-text">Loading events…</div></div>
+    </div>
+  </div>
+
+  <!-- MAP TAB -->
+  <div id="tabMap" style="display:none">
+    <div id="mapArea">
+      <div class="loading-screen"><div class="spinner"></div><div class="loading-text">Loading map…</div></div>
+    </div>
+  </div>
+
+  <!-- ITEM SHOP TAB -->
+  <div id="tabShop" style="display:none">
+    <div id="shopArea">
+      <div class="loading-screen"><div class="spinner"></div><div class="loading-text">Loading item shop…</div></div>
     </div>
   </div>
 
@@ -473,6 +566,167 @@ async function loadEvents() {
   }
 }
 
+// ── map ───────────────────────────────────────────────────────────────────────
+let mapLoaded = false;
+
+async function loadMap() {
+  if (mapLoaded) return;
+  document.getElementById('mapArea').innerHTML =
+    `<div class="loading-screen"><div class="spinner"></div><div class="loading-text">Loading map…</div></div>`;
+  try {
+    const res  = await fetch('https://fortnite-api.com/v1/map');
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error('Failed to load map');
+    const data = body.data;
+    const mapImg = data.images.pois;
+    const pois   = (data.pois || []).filter(p => p.name).sort((a, b) => a.name.localeCompare(b.name));
+
+    document.getElementById('mapArea').innerHTML = `
+      <div class="map-layout">
+        <div class="map-img-wrap" id="mapImgWrap">
+          <img id="mapImg" src="${mapImg}" alt="Fortnite Map" loading="lazy">
+        </div>
+        <div class="map-sidebar">
+          <div class="map-sidebar-title">Locations <span class="map-poi-count">(${pois.length})</span></div>
+          <input class="map-search" id="mapSearch" type="text" placeholder="Search location…" spellcheck="false">
+          <div class="map-poi-list" id="mapPoiList">
+            ${pois.map(p => `<div class="map-poi-item" data-name="${p.name}">${p.name}</div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+
+    document.getElementById('mapSearch').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('.map-poi-item').forEach(el => {
+        el.style.display = el.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+
+    const wrap = document.getElementById('mapImgWrap');
+    wrap.addEventListener('click', e => {
+      const rect = wrap.getBoundingClientRect();
+      const ox = ((e.clientX - rect.left) / rect.width  * 100).toFixed(1) + '%';
+      const oy = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%';
+      wrap.style.setProperty('--ox', ox);
+      wrap.style.setProperty('--oy', oy);
+      wrap.classList.toggle('zoomed');
+    });
+
+    mapLoaded = true;
+  } catch (err) {
+    document.getElementById('mapArea').innerHTML =
+      `<div class="error-box"><div class="error-title">Could not load map</div><div class="error-msg">Check your internet connection.</div><div class="error-code">${err.message}</div></div>`;
+  }
+}
+
+// ── item shop ─────────────────────────────────────────────────────────────────
+async function fetchShop() {
+  const res  = await fetch('https://fortnite-api.com/v2/shop');
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error('Failed to load shop');
+  return body.data;
+}
+
+const VBUCKS_ICON = `<img src="https://fortnite-api.com/images/vbuck.png" alt="V-Bucks" style="width:18px;height:18px;object-fit:contain;vertical-align:middle">`;
+
+function rarityKey(r) {
+  if (!r) return 'common';
+  const v = (r.value || r).toLowerCase().replace(/\s+/g, '');
+  if (v.includes('gaming')) return 'gaminglegends';
+  if (v.includes('star'))   return 'starwars';
+  if (v.includes('icon'))   return 'icon';
+  return v;
+}
+
+function shopCard(entry) {
+  const isTrack = !entry.brItems?.length && entry.tracks?.length;
+  const item    = isTrack ? entry.tracks?.[0] : entry.brItems?.[0];
+  if (!item) return '';
+
+  const name   = entry.bundle?.name || item.name || item.title || 'Unknown';
+  const rk     = isTrack ? 'icon' : rarityKey(item.rarity);
+  const img    = isTrack
+    ? (item.albumArt || '')
+    : (item.images?.featured || item.images?.icon || item.images?.smallIcon || '');
+  const type   = isTrack ? (item.artist ? `by ${item.artist}` : 'Music') : (item.type?.displayValue || '');
+  const price  = entry.finalPrice;
+  const orig   = entry.regularPrice;
+  const isSale = orig > price;
+  const count  = (entry.brItems?.length || 0);
+  const bundle = entry.bundle?.name && count > 1 ? `Bundle · ${count} items` : '';
+
+  return `<div class="shop-card rarity-${rk}">
+    <div class="shop-img-wrap">
+      ${img
+        ? `<img class="shop-img" src="${img}" alt="${name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        : ''}
+      <div class="shop-img-placeholder" ${img ? 'style="display:none"' : ''}>${isTrack ? '🎵' : '🎮'}</div>
+    </div>
+    <div class="shop-rarity-bar rarity-bar-${rk}"></div>
+    <div class="shop-info">
+      ${bundle ? `<div class="shop-bundle">${bundle}</div>` : ''}
+      <div class="shop-name">${name}</div>
+      <div class="shop-type">${type}</div>
+      <div class="shop-price ${isSale ? 'price-sale' : ''}">
+        ${VBUCKS_ICON}
+        ${price.toLocaleString('en-US')}
+        ${isSale ? `<span class="shop-price-orig">${orig.toLocaleString('en-US')}</span>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+async function loadShop() {
+  document.getElementById('shopArea').innerHTML =
+    `<div class="loading-screen"><div class="spinner"></div><div class="loading-text">Loading item shop…</div></div>`;
+  try {
+    const data    = await fetchShop();
+    const entries = data?.entries || [];
+    const date    = data?.date ? new Date(data.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '';
+
+    const sectionFor = entry => {
+      const n = entry.section?.name || entry.categories?.[0];
+      if (n) return n;
+      if (entry.bundle) return 'Bundles';
+      if (!entry.brItems?.length && entry.tracks?.length) return 'Music';
+      const tile = (entry.tileSize || '');
+      const [, w, , h] = tile.match(/Size_(\d+)_x_(\d+)/i) || [];
+      if (w && (Number(w) >= 2 || Number(h) >= 2)) return 'Featured';
+      const type = entry.brItems?.[0]?.type?.displayValue;
+      return type || 'Daily';
+    };
+
+    const sections = new Map();
+    for (const entry of entries) {
+      const key = sectionFor(entry);
+      if (!sections.has(key)) sections.set(key, []);
+      sections.get(key).push(entry);
+    }
+
+    const order = ['Featured', 'Daily', 'Bundles', 'Outfit', 'Back Bling', 'Pickaxe', 'Glider', 'Emote', 'Wrap', 'Spray', 'Loading Screen', 'Music'];
+    const sorted = [...sections.entries()].sort(([a], [b]) => {
+      const ai = order.indexOf(a), bi = order.indexOf(b);
+      if (ai !== -1 && bi !== -1) return ai - bi;
+      if (ai !== -1) return -1;
+      if (bi !== -1) return 1;
+      return a.localeCompare(b);
+    });
+
+    document.getElementById('shopArea').innerHTML = `
+      ${date ? `<div class="shop-date">Shop refreshes daily · ${date}</div>` : ''}
+      ${sorted.map(([section, items]) => `
+        <div class="shop-section">
+          <div class="shop-section-title">${section} <span style="color:var(--purple-mid);font-style:normal">(${items.length})</span></div>
+          <div class="shop-grid">
+            ${items.map(shopCard).join('')}
+          </div>
+        </div>`).join('')}`;
+  } catch (err) {
+    document.getElementById('shopArea').innerHTML =
+      `<div class="error-box"><div class="error-title">Could not load shop</div><div class="error-msg">Check your internet connection.</div><div class="error-code">${err.message}</div></div>`;
+  }
+}
+
 // ── leaderboard ───────────────────────────────────────────────────────────────
 function addToLeaderboard(name, platform, overall) {
   if (!overall) return;
@@ -525,6 +779,8 @@ function switchTab(tab) {
   document.getElementById('tabStats').style.display       = tab === 'stats'       ? 'block' : 'none';
   document.getElementById('tabEvents').style.display      = tab === 'events'      ? 'block' : 'none';
   document.getElementById('tabLeaderboard').style.display = tab === 'leaderboard' ? 'block' : 'none';
+  document.getElementById('tabShop').style.display        = tab === 'shop'        ? 'block' : 'none';
+  document.getElementById('tabMap').style.display         = tab === 'map'         ? 'block' : 'none';
   if (tab === 'leaderboard') renderLeaderboard();
 }
 
@@ -599,6 +855,8 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     const tab = btn.dataset.tab;
     switchTab(tab);
     if (tab === 'events') loadEvents();
+    if (tab === 'shop') loadShop();
+    if (tab === 'map')  loadMap();
   });
 });
 
