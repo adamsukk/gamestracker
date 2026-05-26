@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -88,15 +89,19 @@
 
     /* ─── HERO ─── */
     .hero {
-      position: relative; height: 150px;
-      background: radial-gradient(ellipse 90% 120% at 50% 0%, rgba(124,58,237,0.40) 0%, transparent 70%);
+      position: relative; height: 210px;
+      background: radial-gradient(ellipse 90% 140% at 50% 0%, rgba(124,58,237,0.45) 0%, transparent 70%);
       border-bottom: 1px solid var(--border-soft);
     }
+    body.is-home .hero { background: none; border-bottom-color: transparent; }
+    body.is-home .hero-grid { display: none; }
     .hero-grid {
       position: absolute; inset: 0; overflow: hidden;
-      background-image: linear-gradient(rgba(124,58,237,0.08) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(124,58,237,0.08) 1px, transparent 1px);
-      background-size: 40px 40px;
+      background-image: linear-gradient(rgba(124,58,237,0.10) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(124,58,237,0.10) 1px, transparent 1px);
+      background-size: 60px 60px;
+      background-attachment: fixed;
+      background-position: 0 56px;
     }
 
     /* ─── PROFILE (outside hero, overlaps via negative margin) ─── */
@@ -172,7 +177,6 @@
     .mode-dot  { width: 8px; height: 8px; border-radius: 50%; }
     .mode-solo  .mode-name { color: var(--blue); }   .mode-solo  .mode-dot { background: var(--blue); }
     .mode-duo   .mode-name { color: var(--green); }  .mode-duo   .mode-dot { background: var(--green); }
-    .mode-trio  .mode-name { color: var(--red); }    .mode-trio  .mode-dot { background: var(--red); }
     .mode-squad .mode-name { color: var(--amber); }  .mode-squad .mode-dot { background: var(--amber); }
     .mode-ltm   .mode-name { color: var(--ltm); }    .mode-ltm   .mode-dot { background: var(--ltm); }
     .mode-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -286,16 +290,43 @@
     .error-code  { margin-top: 10px; font-size: 11px; font-family: ui-monospace, monospace; color: var(--red); opacity: 0.55; }
 
     /* ─── HOME PAGE ─── */
-    .home-hero { text-align: center; padding: 52px 0 40px; }
-    .home-title { font-family: var(--font-display); font-size: 56px; font-weight: 700; color: #fff; line-height: 1; letter-spacing: 0.05em; }
+    #landingArea { position: relative; }
+    .home-grid-bg {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      background-image:
+        radial-gradient(ellipse 100% 60% at 50% 0%, rgba(124,58,237,0.40) 0%, transparent 70%),
+        linear-gradient(rgba(124,58,237,0.09) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,0.09) 1px, transparent 1px);
+      background-size: auto, 60px 60px, 60px 60px;
+      background-position: 50% 56px, 0 56px, 0 56px;
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 85%);
+      mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 85%);
+    }
+    .home-hero { text-align: center; padding: 60px 0 52px; position: relative; z-index: 1; }
+    .home-title { font-family: var(--font-display); font-size: 60px; font-weight: 700; color: #fff; line-height: 1; letter-spacing: 0.05em; position: relative; z-index: 1; }
     .home-title span { color: var(--purple-mid); }
-    .home-subtitle { font-size: 16px; color: var(--text-dim); margin-top: 14px; max-width: 440px; margin-left: auto; margin-right: auto; line-height: 1.6; }
-    .home-search-hint { margin-top: 8px; font-size: 13px; color: var(--text-muted); }
+    .home-subtitle { font-size: 16px; color: var(--text-dim); margin-top: 14px; max-width: 440px; margin-left: auto; margin-right: auto; line-height: 1.6; position: relative; z-index: 1; }
+    .home-search-row { margin-top: 28px; display: flex; justify-content: center; position: relative; z-index: 1; padding: 0 16px; }
+    .home-search-form { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 540px; }
+    .home-search-input {
+      flex: 1; height: 46px; padding: 0 14px 0 40px;
+      background: rgba(14,14,26,0.92); border: 1px solid var(--border);
+      border-radius: 12px; color: var(--text); font-family: var(--font-ui);
+      font-size: 14px; font-weight: 500; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .home-search-input::placeholder { color: var(--text-muted); }
+    .home-search-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,58,237,0.15); }
+    .home-search-form .search-icon { top: 50%; transform: translateY(-50%); width: 16px; height: 16px; }
+    .home-search-form .platform-select { height: 46px; }
+    .home-search-form .btn-search { height: 46px; padding: 0 20px; font-size: 14px; }
 
-    .home-section { margin-top: 48px; }
+    .home-section { margin-top: 48px; position: relative; z-index: 1; }
     .home-section-label { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
 
-    .game-cards { display: flex; gap: 12px; flex-wrap: wrap; }
+    .game-cards { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .home-section.centered { text-align: center; display: flex; flex-direction: column; align-items: center; }
     .game-card {
       flex: 0 0 160px; background: var(--bg-card); border: 1px solid var(--border-soft);
       border-radius: 14px; padding: 22px 16px; display: flex; flex-direction: column;
@@ -315,6 +346,62 @@
     .home-news-body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
     .home-news-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: #fff; line-height: 1.2; }
     .home-news-text { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
+    /* ─── PLAYER SELECT ─── */
+    .ps-header { margin-bottom: 28px; }
+    .ps-hint { font-size: 14px; color: var(--text-muted); margin-top: 6px; }
+    .ps-grid { display: flex; flex-direction: column; gap: 10px; max-width: 640px; }
+    .ps-card {
+      background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: 14px;
+      padding: 18px 20px; display: flex; align-items: center; gap: 16px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .ps-card:hover { border-color: var(--purple); background: rgba(124,58,237,0.08); }
+    .ps-avatar {
+      width: 56px; height: 56px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, #7c3aed, #4c1d95);
+      border: 2px solid rgba(196,181,253,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 22px; font-weight: 700; color: #fff;
+    }
+    .ps-info { flex: 1; min-width: 0; }
+    .ps-name { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: #fff; line-height: 1; }
+    .ps-meta { margin-top: 7px; display: flex; gap: 6px; flex-wrap: wrap; }
+    .ps-stats { margin-top: 8px; display: flex; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500; }
+    .ps-arrow { width: 20px; height: 20px; flex-shrink: 0; color: var(--text-muted); transition: all 0.15s; }
+    .ps-card:hover .ps-arrow { color: var(--purple-light); transform: translateX(3px); }
+
+    /* ─── GAMES DROPDOWN ─── */
+    .nav-games-dropdown { position: relative; flex-shrink: 0; }
+    .nav-games-btn {
+      padding: 6px 13px; border-radius: 8px; border: none; background: transparent;
+      font-family: var(--font-ui); font-size: 13px; font-weight: 500; color: var(--text-muted);
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .nav-games-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-games-chevron { width: 12px; height: 12px; transition: transform 0.15s; flex-shrink: 0; }
+    .nav-games-dropdown.open .nav-games-chevron { transform: rotate(180deg); }
+    .nav-games-panel {
+      display: none; position: absolute; top: calc(100% + 10px); left: 0;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; min-width: 190px; padding: 6px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.65); z-index: 400;
+    }
+    .nav-games-dropdown.open .nav-games-panel { display: block; animation: modal-in 0.15s cubic-bezier(.22,1,.36,1); }
+    .nav-game-opt {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 12px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      color: var(--text-dim); cursor: pointer; transition: all 0.12s; gap: 8px;
+    }
+    .nav-game-opt:hover { background: rgba(124,58,237,0.10); color: var(--text); }
+    .nav-game-opt.opt-active { color: var(--purple-light); }
+    .nav-game-opt.opt-soon { opacity: 0.5; cursor: default; }
+    .nav-game-opt.opt-soon:hover { background: transparent; color: var(--text-dim); }
+    .nav-game-label { display: flex; align-items: center; gap: 8px; }
+    .nav-game-badge { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; }
+    .nav-game-badge.b-active { background: rgba(124,58,237,0.18); color: var(--purple-mid); }
+    .nav-game-badge.b-soon { background: rgba(255,255,255,0.05); color: var(--text-muted); }
 
     /* ─── SEARCH MODAL ─── */
     .modal-overlay {
@@ -366,6 +453,14 @@
     .warn-hint button { padding: 6px 18px; border-radius: 8px; border: 1px solid rgba(251,191,36,0.35); background: rgba(251,191,36,0.10); color: var(--amber); font-family: var(--font-ui); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
     .warn-hint button:hover { background: rgba(251,191,36,0.18); }
 
+    /* ─── CHARTS ─── */
+    .charts-section { margin-top: 36px; }
+    .charts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+    .chart-card { background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: 12px; padding: 18px 18px 14px; }
+    .chart-card-title { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
+    @media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 540px) { .charts-grid { grid-template-columns: 1fr; } }
+
     /* ─── RESPONSIVE ─── */
     @media (max-width: 1000px) {
       .stats-overall { grid-template-columns: repeat(3, 1fr); }
@@ -386,11 +481,15 @@
       .lb-table th:nth-child(5), .lb-table td:nth-child(5),
       .lb-table th:nth-child(6), .lb-table td:nth-child(6) { display: none; }
     }
+    @media (max-width: 700px) {
+      .home-search-form { flex-wrap: wrap; }
+      .home-search-form .platform-select { flex: 1; min-width: 100px; }
+    }
     @media (max-width: 480px) {
       .modes-grid    { grid-template-columns: 1fr 1fr; }
       .stats-overall { grid-template-columns: repeat(2, 1fr); }
       .profile-name  { font-size: 22px; }
-      .home-title    { font-size: 38px; }
+      .home-title    { font-size: 40px; }
       .home-subtitle { font-size: 14px; }
       .game-cards    { gap: 8px; }
       .game-card     { flex: 0 0 140px; padding: 16px 12px; }
@@ -398,6 +497,7 @@
       .tab-nav       { padding: 0 16px; }
       .tab-btn       { padding: 10px 13px; font-size: 12px; }
       .home-news-grid{ grid-template-columns: 1fr; }
+      .home-search-form .btn-search { width: 100%; }
     }
   </style>
 </head>
@@ -413,7 +513,31 @@
     <button class="nav-menu-btn" id="navBtnShop">Item Shop</button>
     <button class="nav-menu-btn" id="navBtnMap">Map</button>
   </nav>
-  <form class="search-form" id="searchForm" autocomplete="off">
+  <div class="nav-games-dropdown" id="navGamesDropdown" style="display:none">
+    <button class="nav-games-btn" id="navGamesBtn" type="button">
+      Games
+      <svg class="nav-games-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="nav-games-panel" id="navGamesPanel">
+      <div class="nav-game-opt opt-active">
+        <div class="nav-game-label">🏆 Fortnite</div>
+        <span class="nav-game-badge b-active">Active</span>
+      </div>
+      <div class="nav-game-opt opt-soon">
+        <div class="nav-game-label">🎯 Valorant</div>
+        <span class="nav-game-badge b-soon">Soon</span>
+      </div>
+      <div class="nav-game-opt opt-soon">
+        <div class="nav-game-label">💣 CS2</div>
+        <span class="nav-game-badge b-soon">Soon</span>
+      </div>
+      <div class="nav-game-opt opt-soon">
+        <div class="nav-game-label">🚀 Apex</div>
+        <span class="nav-game-badge b-soon">Soon</span>
+      </div>
+    </div>
+  </div>
+  <form class="search-form" id="searchForm" autocomplete="off" style="display:none">
     <div class="search-wrap">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input class="search-input" id="searchInput" type="text" placeholder="Player name…" spellcheck="false">
@@ -457,13 +581,27 @@
 
   <!-- HOME PAGE -->
   <div id="landingArea">
+    <div class="home-grid-bg" aria-hidden="true"></div>
     <div class="home-hero">
       <div class="home-title">GAMES<span>·</span>TRACKER</div>
       <div class="home-subtitle">Real-time Fortnite Battle Royale stats, item shop, map &amp; more</div>
-      <div class="home-search-hint">Search for a player in the bar above to get started</div>
+      <div class="home-search-row">
+        <form class="home-search-form" id="homeSearchForm" autocomplete="off">
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input class="home-search-input" id="homeSearchInput" type="text" placeholder="Search player name…" spellcheck="false">
+          </div>
+          <select class="platform-select" id="homePlatformSelect">
+            <option value="epic">Epic</option>
+            <option value="psn">PSN</option>
+            <option value="xbl">Xbox</option>
+          </select>
+          <button class="btn-search" type="submit">Search</button>
+        </form>
+      </div>
     </div>
 
-    <div class="home-section">
+    <div class="home-section centered">
       <div class="home-section-label">Select Game</div>
       <div class="game-cards">
         <div class="game-card game-active">
@@ -514,6 +652,23 @@
     </div>
     <div id="overallArea"></div>
     <div id="modesArea"></div>
+    <div id="chartsArea" style="display:none" class="charts-section">
+      <div class="modes-label">Performance Charts</div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-card-title">K/D Ratio by Mode</div>
+          <canvas id="chartKD"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title">Win Rate % by Mode</div>
+          <canvas id="chartWR"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title">Kills per Match</div>
+          <canvas id="chartKPM"></canvas>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- EVENTS TAB -->
@@ -537,6 +692,9 @@
       <div class="loading-screen"><div class="spinner"></div><div class="loading-text">Loading item shop…</div></div>
     </div>
   </div>
+
+  <!-- PLAYER SELECT (multi-platform results) -->
+  <div id="playerSelectArea" style="display:none"></div>
 
   <!-- LEADERBOARD TAB -->
   <div id="tabLeaderboard" style="display:none">
@@ -708,13 +866,84 @@ function modeCard(key, label, cls, all) {
   </div>`;
 }
 
+// ── charts ────────────────────────────────────────────────────────────────────
+let _charts = {};
+function renderCharts(all) {
+  const area = document.getElementById('chartsArea');
+  if (!all || typeof Chart === 'undefined') { area.style.display = 'none'; return; }
+
+  const modes  = ['solo', 'duo', 'squad', 'ltm'];
+  const labels = ['Solo', 'Duo', 'Squad', 'LTM'];
+  const colors = ['#60a5fa', '#4ade80', '#fbbf24', '#c084fc'];
+  const bgs    = colors.map(c => c + '28');
+
+  const get = (m, k) => Number(all?.[m]?.[k] || 0);
+  const kd  = modes.map(m => +get(m, 'kd').toFixed(2));
+  const wr  = modes.map(m => +get(m, 'winRate').toFixed(1));
+  const kpm = modes.map(m => {
+    const kills = get(m, 'kills'), matches = get(m, 'matches');
+    return matches > 0 ? +(kills / matches).toFixed(2) : 0;
+  });
+
+  Object.values(_charts).forEach(c => c?.destroy());
+  _charts = {};
+
+  const chartOpts = (data, unit) => ({
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: bgs,
+        borderColor: colors,
+        borderWidth: 2,
+        borderRadius: 7,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0e0e1a',
+          borderColor: 'rgba(124,58,237,0.35)',
+          borderWidth: 1,
+          titleColor: '#e2e8f0',
+          bodyColor: '#94a3b8',
+          padding: 10,
+          callbacks: { label: ctx => '  ' + ctx.raw + unit }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          border: { display: false },
+          ticks: { color: '#64748b', font: { size: 11, family: 'Inter, sans-serif' } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          border: { display: false },
+          ticks: { color: '#64748b', font: { size: 11, family: 'Inter, sans-serif' } },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  area.style.display = 'block';
+  _charts.kd  = new Chart(document.getElementById('chartKD'),  chartOpts(kd,  ''));
+  _charts.wr  = new Chart(document.getElementById('chartWR'),  chartOpts(wr,  '%'));
+  _charts.kpm = new Chart(document.getElementById('chartKPM'), chartOpts(kpm, ''));
+}
+
 function renderModes(all) {
   document.getElementById('modesArea').innerHTML = `
     <div class="modes-label" style="margin-top:8px">By Mode</div>
     <div class="modes-grid">
       ${modeCard('solo',  'Solo',   'mode-solo',  all)}
       ${modeCard('duo',   'Duos',   'mode-duo',   all)}
-      ${modeCard('trio',  'Trios',  'mode-trio',  all)}
       ${modeCard('squad', 'Squads', 'mode-squad', all)}
       ${modeCard('ltm',   'LTM',    'mode-ltm',   all)}
     </div>`;
@@ -968,9 +1197,144 @@ async function loadShop() {
   }
 }
 
+// ── multi-platform player search + select ────────────────────────────────────
+function _showSearchUI(name) {
+  document.body.classList.remove('is-home');
+  const psa = document.getElementById('playerSelectArea');
+  document.getElementById('searchForm').style.display       = '';
+  document.getElementById('navGamesDropdown').style.display = '';
+  document.getElementById('landingArea').style.display      = 'none';
+  document.getElementById('profileOuter').style.display     = 'none';
+  document.getElementById('tabNav').style.display           = 'none';
+  document.getElementById('tabStats').style.display         = 'none';
+  document.getElementById('tabEvents').style.display        = 'none';
+  document.getElementById('tabLeaderboard').style.display   = 'none';
+  document.getElementById('tabShop').style.display          = 'none';
+  document.getElementById('tabMap').style.display           = 'none';
+  psa.style.display = 'block';
+  psa.innerHTML = `<div class="loading-screen"><div class="spinner"></div><div class="loading-text">Searching for <strong>${name}</strong>…</div></div>`;
+  return psa;
+}
+
+function _psaError(psa, name, errors) {
+  const isPrivate = errors.some(e => e.includes('403'));
+  psa.innerHTML = isPrivate
+    ? `<div class="warn-box">
+        <div class="warn-title">Stats are Private</div>
+        <div class="warn-msg"><strong>${name}</strong> has their stats set to private.<br>They need to set Stats Visibility to <em>Public</em> in Fortnite settings.</div>
+      </div>`
+    : `<div class="error-box">
+        <div class="error-title">Player not found</div>
+        <div class="error-msg">No player named <strong>${name}</strong> found.<br>Check the exact spelling — names are case-sensitive.</div>
+        <div class="error-code">Tip: players with private stats won't appear even if they exist.</div>
+      </div>`;
+}
+
+function _psaSelect(psa, name, found) {
+  psa.innerHTML = `
+    <div class="ps-header">
+      <span class="section-label">Multiple accounts found · "${name}"</span>
+      <div class="ps-hint">Select the correct profile</div>
+    </div>
+    <div class="ps-grid">
+      ${found.map(({ platform, data }) => {
+        const pname    = data.account?.name || name;
+        const level    = data.battlePass?.level;
+        const ov       = data.stats?.all?.overall;
+        const safeName = pname.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+        return `<div class="ps-card" data-pname="${safeName}" data-platform="${platform}">
+          <div class="ps-avatar">${initials(pname)}</div>
+          <div class="ps-info">
+            <div class="ps-name">${pname}</div>
+            <div class="ps-meta">
+              <span class="badge badge-platform">${platformLabel(platform)}</span>
+              ${level ? `<span class="badge badge-bp">Level ${level}</span>` : ''}
+            </div>
+            ${ov ? `<div class="ps-stats">
+              <span>${fmtKD(ov.kd)} K/D</span>
+              <span>${fmt(ov.wins)} wins</span>
+              <span>${fmt(ov.matches)} matches</span>
+            </div>` : ''}
+          </div>
+          <svg class="ps-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+async function searchAndSelect(name, preferredPlatform) {
+  if (!name.trim()) return;
+  const pref = preferredPlatform || 'epic';
+  const psa  = _showSearchUI(name);
+  setLoading(true);
+  setNavActive('navBtnPlayer');
+
+  // Step 1 — try the selected platform first (1 API call)
+  let prefData = null, prefErr = null;
+  try {
+    const r = await fetchStats(name, pref, 'lifetime');
+    prefData = r.data;
+  } catch (e) { prefErr = e?.message || ''; }
+
+  // 403 on preferred → private stats, no point searching further
+  if (prefErr?.includes('403')) {
+    setLoading(false);
+    _psaError(psa, name, [prefErr]);
+    return;
+  }
+
+  // Always check other platforms too so same-name accounts can be selected
+  const others  = ['epic', 'psn', 'xbl'].filter(p => p !== pref);
+  const results = await Promise.allSettled(
+    others.map(p => fetchStats(name, p, 'lifetime').then(r => ({ platform: p, data: r.data })))
+  );
+  setLoading(false);
+
+  const found  = [
+    ...(prefData ? [{ platform: pref, data: prefData }] : []),
+    ...results.filter(r => r.status === 'fulfilled').map(r => r.value)
+  ];
+  const errors = [prefErr || '', ...results.filter(r => r.status === 'rejected').map(r => r.reason?.message || '')];
+
+  if (found.length === 0) { _psaError(psa, name, errors); return; }
+
+  if (found.length === 1) {
+    psa.style.display = 'none';
+    const { platform, data } = found[0];
+    currentPlayer   = data.account?.name || name;
+    currentPlatform = platform;
+    document.getElementById('searchInput').value    = currentPlayer;
+    document.getElementById('platformSelect').value = platform;
+    switchTab('stats');
+    load(currentPlayer, platform, currentWindow);
+    return;
+  }
+
+  _psaSelect(psa, name, found);
+}
+
+document.getElementById('playerSelectArea').addEventListener('click', e => {
+  const card = e.target.closest('.ps-card');
+  if (!card) return;
+  const name     = card.dataset.pname;
+  const platform = card.dataset.platform;
+  document.getElementById('playerSelectArea').style.display = 'none';
+  currentPlayer   = name;
+  currentPlatform = platform;
+  document.getElementById('searchInput').value    = name;
+  document.getElementById('platformSelect').value = platform;
+  setNavActive('navBtnPlayer');
+  switchTab('stats');
+  load(name, platform, currentWindow);
+});
+
 // ── global sections (shop / map — no player needed) ───────────────────────────
 function showGlobalSection(section) {
-  document.getElementById('landingArea').style.display    = 'none';
+  document.body.classList.remove('is-home');
+  document.getElementById('searchForm').style.display       = '';
+  document.getElementById('navGamesDropdown').style.display = '';
+  document.getElementById('playerSelectArea').style.display = 'none';
+  document.getElementById('landingArea').style.display      = 'none';
   document.getElementById('profileOuter').style.display  = 'none';
   document.getElementById('tabNav').style.display        = 'none';
   document.getElementById('tabStats').style.display      = 'none';
@@ -990,8 +1354,12 @@ function setLoading(on) {
 
 async function load(name, platform, timeWindow) {
   if (!name.trim()) return;
+  document.body.classList.remove('is-home');
   setLoading(true);
-  document.getElementById('landingArea').style.display = 'none';
+  document.getElementById('searchForm').style.display       = '';
+  document.getElementById('navGamesDropdown').style.display = '';
+  document.getElementById('playerSelectArea').style.display = 'none';
+  document.getElementById('landingArea').style.display      = 'none';
   document.getElementById('tabShop').style.display     = 'none';
   document.getElementById('tabMap').style.display      = 'none';
   document.getElementById('tabStats').style.display    = activeTab === 'stats' ? 'block' : 'none';
@@ -1006,12 +1374,18 @@ async function load(name, platform, timeWindow) {
     const all = data?.stats?.all;
     renderOverall(all?.overall);
     renderModes(all);
+    renderCharts(all);
     addToLeaderboard(data.account?.name || name, platform, all?.overall);
   } catch (err) {
-    document.getElementById('profileOuter').style.display = 'none';
-    document.getElementById('tabNav').style.display       = 'none';
     const isNotFound = err.message.includes('404') || err.message.toLowerCase().includes('not found') || err.message.toLowerCase().includes('no data');
     if (timeWindow === 'season' && isNotFound) {
+      try {
+        const fb = await fetchStats(name, platform, 'lifetime');
+        renderProfile(fb.data, platform);
+      } catch {
+        document.getElementById('profileOuter').style.display = 'none';
+        document.getElementById('tabNav').style.display       = 'none';
+      }
       document.getElementById('overallArea').innerHTML = `
         <div class="warn-box">
           <div class="warn-title">No Season Data</div>
@@ -1019,6 +1393,8 @@ async function load(name, platform, timeWindow) {
           <div class="warn-hint"><button onclick="switchToLifetime()">Switch to Lifetime stats</button></div>
         </div>`;
     } else {
+      document.getElementById('profileOuter').style.display = 'none';
+      document.getElementById('tabNav').style.display       = 'none';
       document.getElementById('overallArea').innerHTML = `
         <div class="error-box">
           <div class="error-title">Player not found</div>
@@ -1027,6 +1403,7 @@ async function load(name, platform, timeWindow) {
         </div>`;
     }
     document.getElementById('modesArea').innerHTML = '';
+    renderCharts(null);
     document.getElementById('tabStats').style.display = 'block';
   } finally {
     setLoading(false);
@@ -1040,14 +1417,18 @@ function setNavActive(id) {
 }
 
 function showHome() {
-  document.getElementById('landingArea').style.display    = 'block';
-  document.getElementById('profileOuter').style.display  = 'none';
-  document.getElementById('tabNav').style.display        = 'none';
-  document.getElementById('tabStats').style.display      = 'none';
-  document.getElementById('tabEvents').style.display     = 'none';
-  document.getElementById('tabLeaderboard').style.display= 'none';
-  document.getElementById('tabShop').style.display       = 'none';
-  document.getElementById('tabMap').style.display        = 'none';
+  document.body.classList.add('is-home');
+  document.getElementById('searchForm').style.display       = 'none';
+  document.getElementById('navGamesDropdown').style.display = 'none';
+  document.getElementById('playerSelectArea').style.display = 'none';
+  document.getElementById('landingArea').style.display      = 'block';
+  document.getElementById('profileOuter').style.display     = 'none';
+  document.getElementById('tabNav').style.display           = 'none';
+  document.getElementById('tabStats').style.display         = 'none';
+  document.getElementById('tabEvents').style.display        = 'none';
+  document.getElementById('tabLeaderboard').style.display   = 'none';
+  document.getElementById('tabShop').style.display          = 'none';
+  document.getElementById('tabMap').style.display           = 'none';
   setNavActive('navBtnHome');
 }
 
@@ -1061,6 +1442,16 @@ document.getElementById('navBtnShop').addEventListener('click', () => {
 document.getElementById('navBtnMap').addEventListener('click', () => {
   showGlobalSection('map');
   loadMap();
+});
+
+// ── games dropdown ────────────────────────────────────────────────────────────
+const navGamesDropdown = document.getElementById('navGamesDropdown');
+document.getElementById('navGamesBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  navGamesDropdown.classList.toggle('open');
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('#navGamesDropdown')) navGamesDropdown.classList.remove('open');
 });
 
 // ── switch to lifetime (called from warn-box button) ─────────────────────────
@@ -1098,16 +1489,18 @@ async function loadHomeNews() {
 }
 
 // ── events ────────────────────────────────────────────────────────────────────
+document.getElementById('homeSearchForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('homeSearchInput').value.trim();
+  if (!name || isLoading) return;
+  searchAndSelect(name, document.getElementById('homePlatformSelect').value);
+});
+
 document.getElementById('searchForm').addEventListener('submit', e => {
   e.preventDefault();
-  const name     = document.getElementById('searchInput').value.trim();
-  const platform = document.getElementById('platformSelect').value;
+  const name = document.getElementById('searchInput').value.trim();
   if (!name || isLoading) return;
-  currentPlayer   = name;
-  currentPlatform = platform;
-  setNavActive('navBtnPlayer');
-  switchTab('stats');
-  load(name, platform, currentWindow);
+  searchAndSelect(name, document.getElementById('platformSelect').value);
 });
 
 document.querySelectorAll('.toggle-btn').forEach(btn => {
@@ -1161,20 +1554,14 @@ document.addEventListener('keydown', e => {
 });
 document.getElementById('modalForm').addEventListener('submit', e => {
   e.preventDefault();
-  const name     = document.getElementById('modalInput').value.trim();
-  const platform = document.getElementById('modalPlatform').value;
+  const name = document.getElementById('modalInput').value.trim();
   if (!name || isLoading) return;
   closeSearchModal();
-  currentPlayer   = name;
-  currentPlatform = platform;
-  document.getElementById('searchInput').value     = name;
-  document.getElementById('platformSelect').value  = platform;
-  setNavActive('navBtnPlayer');
-  switchTab('stats');
-  load(name, platform, currentWindow);
+  searchAndSelect(name, document.getElementById('modalPlatform').value);
 });
 
 // ── init ──────────────────────────────────────────────────────────────────────
+document.body.classList.add('is-home');
 loadHomeNews();
 </script>
 </body>
