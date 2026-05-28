@@ -1924,10 +1924,13 @@ async function fetchLolStats(name, region) {
 
   const base     = `https://${region}.api.riotgames.com`;
   const regional = PLATFORM_TO_REGIONAL[region] || 'europe';
-
   const [gameName, tagLine] = name.split('#');
+
   const account = await lolFetch(`https://${regional}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`);
+  if (!account?.puuid) throw new Error('Účet nenalezen. Zkontroluj Riot ID a region.');
+
   const summoner = await lolFetch(`${base}/lol/summoner/v4/summoners/by-puuid/${account.puuid}`);
+  if (!summoner?.id) throw new Error('Summoner nenalezen na tomto serveru — zkus jiný region.');
   summoner._displayName = `${account.gameName}#${account.tagLine}`;
 
   const [rankedData, masteryData, ddVer] = await Promise.all([
