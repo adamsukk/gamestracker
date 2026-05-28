@@ -638,7 +638,7 @@
   <form class="search-form" id="lolSearchForm" autocomplete="off" style="display:none">
     <div class="search-wrap">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input class="search-input" id="lolSearchInput" type="text" placeholder="Summoner name…" spellcheck="false">
+      <input class="search-input" id="lolSearchInput" type="text" placeholder="Jméno#TAG (např. Faker#T1)…" spellcheck="false">
     </div>
     <select class="platform-select" id="lolRegionSelect">
       <option value="euw1">EUW</option>
@@ -839,7 +839,7 @@
         <form class="home-search-form" id="lolHomeSearchForm" autocomplete="off">
           <div class="search-wrap">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input class="home-search-input" id="lolHomeSearchInput" type="text" placeholder="Search summoner name…" spellcheck="false">
+            <input class="home-search-input" id="lolHomeSearchInput" type="text" placeholder="Riot ID: Jméno#TAG…" spellcheck="false">
           </div>
           <select class="platform-select" id="lolHomeRegionSelect">
             <option value="euw1">EUW</option>
@@ -926,7 +926,7 @@
         <div class="modal-label">Summoner Name</div>
         <div class="modal-input-wrap search-wrap">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input class="modal-search-input" id="lolModalInput" type="text" placeholder="Enter summoner name…" spellcheck="false">
+          <input class="modal-search-input" id="lolModalInput" type="text" placeholder="Jméno#TAG (např. Faker#T1)…" spellcheck="false">
         </div>
       </div>
       <div>
@@ -1879,18 +1879,17 @@ async function getChampById() {
 }
 
 async function fetchLolStats(name, region) {
+  if (!name.includes('#')) {
+    throw new Error('Použij Riot ID formát: Jméno#TAG — například "sukalsifyyy#EUW" nebo "Faker#T1". Starý systém summoner jmen Riot zrušil.');
+  }
+
   const base     = `https://${region}.api.riotgames.com`;
   const regional = PLATFORM_TO_REGIONAL[region] || 'europe';
-  let summoner;
 
-  if (name.includes('#')) {
-    const [gameName, tagLine] = name.split('#');
-    const account = await lolFetch(`https://${regional}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`);
-    summoner = await lolFetch(`${base}/lol/summoner/v4/summoners/by-puuid/${account.puuid}`);
-    summoner._displayName = `${account.gameName}#${account.tagLine}`;
-  } else {
-    summoner = await lolFetch(`${base}/lol/summoner/v4/summoners/by-name/${encodeURIComponent(name)}`);
-  }
+  const [gameName, tagLine] = name.split('#');
+  const account = await lolFetch(`https://${regional}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`);
+  const summoner = await lolFetch(`${base}/lol/summoner/v4/summoners/by-puuid/${account.puuid}`);
+  summoner._displayName = `${account.gameName}#${account.tagLine}`;
 
   const [rankedData, masteryData, ddVer] = await Promise.all([
     lolFetch(`${base}/lol/league/v4/entries/by-summoner/${summoner.id}`),
