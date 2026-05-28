@@ -1131,7 +1131,7 @@
         </div>
       </div>
       <div style="font-size:12px;color:var(--text-muted);line-height:1.6">
-        Klíč získáš na <strong style="color:var(--text-dim)">tracker.gg/developers</strong> po přihlášení.
+        Klíč získáš zdarma na <strong style="color:var(--text-dim)">mozambiquehe.re</strong> — sekce API.
       </div>
       <button class="modal-submit" type="submit">Uložit klíč</button>
     </form>
@@ -2414,56 +2414,92 @@ document.querySelectorAll('[data-loltab]').forEach(btn => {
   btn.addEventListener('click', () => switchLolTab(btn.dataset.loltab));
 });
 
-// ─── APEX API ────────────────────────────────────────────────────────────────
+// ─── APEX API (mozambiquehe.re) ───────────────────────────────────────────────
 function getApexKey() { return localStorage.getItem('apex_api_key') || ''; }
 function setApexKey(k) { localStorage.setItem('apex_api_key', k.trim()); }
 
-async function apexFetch(url) {
+async function fetchApexStats(name, platform) {
   const key = getApexKey();
   if (!key) throw new Error('NO_KEY');
+
+  const url = `https://api.mozambiquehe.re/bridge?auth=${key}&player=${encodeURIComponent(name)}&platform=${platform}`;
   let res;
   try {
-    res = await fetch(url, { headers: { 'TRN-Api-Key': key } });
+    res = await fetch(url);
   } catch {
-    res = await fetch('https://corsproxy.io/?' + encodeURIComponent(url), { headers: { 'TRN-Api-Key': key } });
+    res = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
   }
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    if (res.status === 401) throw new Error('API klíč je neplatný. Zkontroluj svůj Tracker.gg API klíč přes ⚙️ API Key.');
-    if (res.status === 404) throw new Error('Hráč nenalezen. Zkontroluj jméno a platformu.');
-    if (res.status === 429) throw new Error('Příliš mnoho požadavků — zkus to za chvíli.');
-    throw new Error(res.status + ' — ' + (body?.errors?.[0]?.message || res.statusText));
-  }
-  return body;
-}
 
-async function fetchApexStats(name, platform) {
-  const url = `https://public-api.tracker.gg/v2/apex/standard/profile/${platform}/${encodeURIComponent(name)}`;
-  const body = await apexFetch(url);
-  const data = body.data;
-  const overview = data.segments?.find(s => s.type === 'overview');
-  const legends  = data.segments?.filter(s => s.type === 'legend') || [];
-  const sv = (key) => overview?.stats?.[key];
+  if (body?.Error) {
+    const e = body.Error.toLowerCase();
+    if (e.includes('invalid') || e.includes('auth'))   throw new Error('API klíč je neplatný. Zkontroluj přes ⚙️ API Key.');
+    if (e.includes('not found') || e.includes('player')) throw new Error('Hráč nenalezen. Zkontroluj jméno a platformu (PC / PSN / Xbox).');
+    throw new Error(body.Error);
+  }
+  if (!res.ok) {
+    if (res.status === 429) throw new Error('Příliš mnoho požadavků — zkus to za chvíli.');
+    throw new Error(res.status + ' — ' + res.statusText);
+  }
+
+  const g = body.global;
+  const globalData = body.legends?.all?.Global?.data || [];
+  const sv = (keys) => {
+    for (const k of (Array.isArray(keys) ? keys : [keys])) {
+      const s = globalData.find(d => d.key === k || d.name?.toLowerCase() === k.toLowerCase());
+      if (s != null) return s.value;
+    }
+    return null;
+  };
+
+  const divStr = ['I','II','III','IV'];
+  const rank   = g?.rank;
+  const rankName = rank?.rankName || 'Unranked';
+  const rankDisplay = (rankName === 'Master' || rankName === 'Predator' || rankName === 'Apex Predator')
+    ? rankName
+    : rank?.rankDiv ? `${rankName} ${divStr[(rank.rankDiv - 1)] || ''}`.trim() : rankName;
+
+  const allLegends = Object.entries(body.legends?.all || {})
+    .filter(([k]) => k !== 'Global')
+    .map(([lname, l]) => {
+      const ld = l.data || [];
+      const ls = (keys) => {
+        for (const k of (Array.isArray(keys) ? keys : [keys])) {
+          const s = ld.find(d => d.key === k || d.name?.toLowerCase().includes(k.toLowerCase()));
+          if (s != null) return s.value;
+        }
+        return null;
+      };
+      return {
+        name:   lname,
+        img:    l.imgAssets?.icon || l.imgAssets?.banner,
+        kills:  ls(['kills','Kills']),
+        wins:   ls(['wins','Wins']),
+        damage: ls(['damage_dealt','damage','Damage']),
+      };
+    })
+    .filter(l => l.kills != null || l.wins != null)
+    .sort((a, b) => (b.kills || 0) - (a.kills || 0))
+    .slice(0, 8);
+
+  const kv = sv(['kills','Kills']);
+  const wv = sv(['wins','Wins']);
+  const kd = (wv != null && kv != null) ? null : sv(['kd','KD Ratio']);
+
   return {
-    name:      data.platformInfo?.platformUserHandle || name,
-    platform:  data.platformInfo?.platformSlug || platform,
-    avatarUrl: data.platformInfo?.avatarUrl || null,
-    level:     sv('level')?.value,
-    rank:      sv('rankName')?.displayValue || 'Unranked',
-    rankScore: sv('rankScore')?.displayValue,
-    kills:     sv('kills')?.displayValue,
-    damage:    sv('damage')?.displayValue,
-    kd:        sv('kd')?.displayValue,
-    wins:      sv('wins')?.displayValue,
-    top3:      sv('top3')?.displayValue,
-    headshots: sv('headshots')?.displayValue,
-    legends: legends.slice(0, 8).map(l => ({
-      name:   l.metadata?.name,
-      img:    l.metadata?.imageUrl || l.metadata?.tallImageUrl,
-      kills:  l.stats?.kills?.displayValue  || '—',
-      wins:   l.stats?.wins?.displayValue   || '—',
-      damage: l.stats?.damage?.displayValue || '—',
-    })),
+    name:      g?.name || name,
+    platform:  g?.platform || platform,
+    avatarUrl: g?.avatar  || null,
+    level:     g?.level,
+    rank:      rankDisplay,
+    rankScore: rank?.rankScore != null ? rank.rankScore + ' RP' : null,
+    kills:     kv != null ? fmt(kv) : null,
+    damage:    sv(['damage_dealt','damage']) != null ? fmt(sv(['damage_dealt','damage'])) : null,
+    kd:        kd != null ? Number(kd).toFixed(2) : (kv != null && wv != null ? null : null),
+    wins:      wv != null ? fmt(wv) : null,
+    top3:      sv(['top3','Top 3 Finishes']) != null ? fmt(sv(['top3','Top 3 Finishes'])) : null,
+    headshots: sv(['headshots','Headshots']) != null ? fmt(sv(['headshots','Headshots'])) : null,
+    legends:   allLegends,
   };
 }
 
