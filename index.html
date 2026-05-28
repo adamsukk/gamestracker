@@ -579,6 +579,45 @@
     .mastery-level { font-size: 10px; color: var(--purple-mid); font-weight: 600; margin-top: 2px; letter-spacing: 0.06em; }
     .mastery-pts   { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
 
+    /* ─── FORTNITE THEME ─── */
+    body.game-fortnite {
+      --purple:       #2563eb;
+      --purple-light: #93c5fd;
+      --purple-mid:   #60a5fa;
+      --border:       rgba(37,99,235,0.18);
+    }
+    body.game-fortnite .hero {
+      background: radial-gradient(ellipse 90% 140% at 50% 0%, rgba(37,99,235,0.45) 0%, transparent 70%);
+    }
+    body.game-fortnite .hero-grid {
+      background-image:
+        linear-gradient(rgba(37,99,235,0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,0.10) 1px, transparent 1px);
+    }
+    body.game-fortnite .avatar {
+      background: linear-gradient(135deg, #2563eb, #1e3a8a);
+      border-color: rgba(147,197,253,0.35);
+      box-shadow: 0 8px 32px rgba(37,99,235,0.45);
+    }
+    body.game-fortnite .ps-avatar { background: linear-gradient(135deg, #2563eb, #1e3a8a); border-color: rgba(147,197,253,0.25); }
+    body.game-fortnite .home-grid-bg {
+      background-image:
+        radial-gradient(ellipse 100% 60% at 50% 0%, rgba(37,99,235,0.40) 0%, transparent 70%),
+        linear-gradient(rgba(37,99,235,0.09) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,0.09) 1px, transparent 1px);
+    }
+    body.game-fortnite .home-search-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+    body.game-fortnite .spinner              { border-top-color: var(--purple); }
+    body.game-fortnite .lb-table tr.me td    { background: rgba(37,99,235,0.08); }
+    body.game-fortnite .lb-sort-btn.active   { background: rgba(37,99,235,0.2); color: var(--purple-light); border-color: var(--purple); }
+    body.game-fortnite .map-poi-item:hover   { background: rgba(37,99,235,0.10); }
+    body.game-fortnite .map-poi-item.active  { background: rgba(37,99,235,0.18); color: var(--purple-light); border-color: rgba(37,99,235,0.35); }
+    body.game-fortnite .ps-card:hover        { border-color: var(--purple); background: rgba(37,99,235,0.08); }
+    body.game-fortnite .btn-refresh:hover    { background: rgba(37,99,235,0.12); color: var(--purple-light); border-color: var(--purple); }
+    body.game-fortnite .game-card.game-active { border-color: rgba(37,99,235,0.6); background: rgba(37,99,235,0.10); box-shadow: 0 0 20px rgba(37,99,235,0.15); }
+    body.game-fortnite .game-card.game-active .game-status-badge { color: var(--purple-mid); background: rgba(37,99,235,0.18); }
+    body.game-fortnite .modal-submit         { background: var(--purple); }
+
     /* ─── APEX THEME ─── */
     body.game-apex {
       --purple:       #e05c10;
@@ -1763,6 +1802,7 @@ function setLoading(on) {
 async function load(name, platform, timeWindow) {
   if (!name.trim()) return;
   document.body.classList.remove('is-home');
+  document.body.classList.add('game-fortnite');
   setLoading(true);
   hideAllSections();
   document.getElementById('searchForm').style.display = '';
@@ -1823,7 +1863,7 @@ function setNavActive(id) {
 
 function showHome() {
   currentGame = null;
-  document.body.classList.remove('game-lol', 'game-apex');
+  document.body.classList.remove('game-fortnite', 'game-lol', 'game-apex');
   document.body.classList.add('is-home');
   hideAllSections();
   document.getElementById('landingArea').style.display   = 'block';
@@ -1996,7 +2036,7 @@ function setGameButtons(game) {
 // ─── GAME SWITCHING ──────────────────────────────────────────────────────────
 function switchToGame(game) {
   currentGame = game;
-  document.body.classList.remove('game-lol', 'game-apex');
+  document.body.classList.remove('game-fortnite', 'game-lol', 'game-apex');
   if (game === 'lol') {
     document.body.classList.add('game-lol');
     setGameButtons('lol');
@@ -2006,6 +2046,7 @@ function switchToGame(game) {
     setGameButtons('apex');
     showApexHome();
   } else {
+    document.body.classList.add('game-fortnite');
     setGameButtons('fortnite');
     showFnHome();
   }
