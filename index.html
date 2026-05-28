@@ -1852,10 +1852,22 @@ const PLATFORM_TO_REGIONAL = {
 };
 
 async function lolFetch(url) {
-  const sep = url.includes('?') ? '&' : '?';
-  const res  = await fetch(url + sep + 'api_key=' + LOL_API_KEY);
+  const sep     = url.includes('?') ? '&' : '?';
+  const fullUrl = url + sep + 'api_key=' + LOL_API_KEY;
+  let res;
+  try {
+    res = await fetch(fullUrl);
+  } catch {
+    // CORS blocked — retry through proxy
+    res = await fetch('https://corsproxy.io/?' + encodeURIComponent(fullUrl));
+  }
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(res.status + ' — ' + (body?.status?.message || res.statusText));
+  if (!res.ok) {
+    const msg = body?.status?.message || res.statusText;
+    if (res.status === 403) throw new Error('403 — API klíč vypršel nebo je neplatný. Obnov ho na developer.riotgames.com (platí jen 24h).');
+    if (res.status === 404) throw new Error('404 — Hráč nenalezen. Zkontroluj Riot ID (Jméno#TAG) a vybraný region.');
+    throw new Error(res.status + ' — ' + msg);
+  }
   return body;
 }
 
