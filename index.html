@@ -1891,7 +1891,8 @@ async function lolFetch(url) {
   }
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
-    if (res.status === 403) throw new Error('403 — API klíč vypršel nebo je neplatný. Klikni na ⚙️ a vlož nový klíč z developer.riotgames.com');
+    if (res.status === 401) throw new Error('API klíč vypršel (platí jen 24h). Jdi na developer.riotgames.com → Regenerate API Key → vlož nový klíč přes ⚙️ API Key v navu.');
+    if (res.status === 403) throw new Error('API klíč vypršel nebo nemá přístup. Jdi na developer.riotgames.com → Regenerate API Key → vlož nový klíč přes ⚙️ API Key v navu.');
     if (res.status === 404) throw new Error('404 — Hráč nenalezen. Zkontroluj Riot ID (Jméno#TAG) a region.');
     throw new Error(res.status + ' — ' + (body?.status?.message || res.statusText));
   }
