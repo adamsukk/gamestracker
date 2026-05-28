@@ -625,44 +625,13 @@
   <div class="nav-sep"></div>
   <nav class="nav-menu">
     <button class="nav-menu-btn active" id="navBtnHome">Home</button>
-    <button class="nav-menu-btn fn-btn" id="navBtnPlayer" style="display:none">Player Stats</button>
     <button class="nav-menu-btn fn-btn" id="navBtnShop" style="display:none">Item Shop</button>
     <button class="nav-menu-btn fn-btn" id="navBtnMap" style="display:none">Map</button>
-    <button class="nav-menu-btn lol-btn" id="navBtnLolPlayer" style="display:none">Player Stats</button>
     <button class="nav-menu-btn lol-btn" id="navBtnLolRanked" style="display:none">Ranked</button>
     <button class="nav-menu-btn lol-btn" id="navBtnLolHistory" style="display:none">Match History</button>
     <button class="nav-menu-btn lol-btn" id="navBtnLolKey" style="display:none" title="Riot API Key">⚙️ API Key</button>
-    <button class="nav-menu-btn apex-btn" id="navBtnApexPlayer" style="display:none">Player Stats</button>
     <button class="nav-menu-btn apex-btn" id="navBtnApexKey" style="display:none" title="Apex API Key">⚙️ API Key</button>
   </nav>
-  <div class="nav-games-dropdown" id="navGamesDropdown" style="display:none">
-    <button class="nav-games-btn" id="navGamesBtn" type="button">
-      Games
-      <svg class="nav-games-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div class="nav-games-panel" id="navGamesPanel">
-      <div class="nav-game-opt opt-active" id="navGameFn" style="cursor:pointer" onclick="switchToGame('fortnite')">
-        <div class="nav-game-label">🏆 Fortnite</div>
-        <span class="nav-game-badge b-active" id="navGameFnBadge">Active</span>
-      </div>
-      <div class="nav-game-opt" id="navGameLol" style="cursor:pointer" onclick="switchToGame('lol')">
-        <div class="nav-game-label">⚔️ League of Legends</div>
-        <span class="nav-game-badge b-soon" id="navGameLolBadge">Active</span>
-      </div>
-      <div class="nav-game-opt opt-soon">
-        <div class="nav-game-label">🎯 Valorant</div>
-        <span class="nav-game-badge b-soon">Soon</span>
-      </div>
-      <div class="nav-game-opt opt-soon">
-        <div class="nav-game-label">💣 CS2</div>
-        <span class="nav-game-badge b-soon">Soon</span>
-      </div>
-      <div class="nav-game-opt" id="navGameApex" style="cursor:pointer" onclick="switchToGame('apex')">
-        <div class="nav-game-label">🚀 Apex Legends</div>
-        <span class="nav-game-badge b-soon" id="navGameApexBadge">Active</span>
-      </div>
-    </div>
-  </div>
   <form class="search-form" id="searchForm" autocomplete="off" style="display:none">
     <div class="search-wrap">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -1654,8 +1623,7 @@ function _showSearchUI(name) {
   document.body.classList.remove('is-home');
   hideAllSections();
   const psa = document.getElementById('playerSelectArea');
-  document.getElementById('searchForm').style.display       = '';
-  document.getElementById('navGamesDropdown').style.display = '';
+  document.getElementById('searchForm').style.display = '';
   setGameButtons('fortnite');
   psa.style.display = 'block';
   psa.innerHTML = `<div class="loading-screen"><div class="spinner"></div><div class="loading-text">Searching for <strong>${name}</strong>…</div></div>`;
@@ -1713,7 +1681,7 @@ async function searchAndSelect(name, preferredPlatform) {
   const pref = preferredPlatform || 'epic';
   const psa  = _showSearchUI(name);
   setLoading(true);
-  setNavActive('navBtnPlayer');
+  setNavActive(null);
 
   // Step 1 — try the selected platform first (1 API call)
   let prefData = null, prefErr = null;
@@ -1769,7 +1737,7 @@ document.getElementById('playerSelectArea').addEventListener('click', e => {
   currentPlatform = platform;
   document.getElementById('searchInput').value    = name;
   document.getElementById('platformSelect').value = platform;
-  setNavActive('navBtnPlayer');
+  setNavActive(null);
   switchTab('stats');
   load(name, platform, currentWindow);
 });
@@ -1778,8 +1746,7 @@ document.getElementById('playerSelectArea').addEventListener('click', e => {
 function showGlobalSection(section) {
   document.body.classList.remove('is-home');
   hideAllSections();
-  document.getElementById('searchForm').style.display       = '';
-  document.getElementById('navGamesDropdown').style.display = '';
+  document.getElementById('searchForm').style.display = '';
   setGameButtons('fortnite');
   document.getElementById('tabShop').style.display = section === 'shop' ? 'block' : 'none';
   document.getElementById('tabMap').style.display  = section === 'map'  ? 'block' : 'none';
@@ -1798,8 +1765,7 @@ async function load(name, platform, timeWindow) {
   document.body.classList.remove('is-home');
   setLoading(true);
   hideAllSections();
-  document.getElementById('searchForm').style.display       = '';
-  document.getElementById('navGamesDropdown').style.display = '';
+  document.getElementById('searchForm').style.display = '';
   setGameButtons('fortnite');
   document.getElementById('tabStats').style.display    = activeTab === 'stats' ? 'block' : 'none';
   document.getElementById('overallArea').innerHTML =
@@ -1860,13 +1826,11 @@ function showHome() {
   document.body.classList.remove('game-lol', 'game-apex');
   document.body.classList.add('is-home');
   hideAllSections();
-  document.getElementById('landingArea').style.display      = 'block';
-  document.getElementById('searchForm').style.display       = 'none';
-  document.getElementById('lolSearchForm').style.display    = 'none';
-  document.getElementById('apexSearchForm').style.display   = 'none';
-  document.getElementById('navGamesDropdown').style.display = 'none';
+  document.getElementById('landingArea').style.display   = 'block';
+  document.getElementById('searchForm').style.display    = 'none';
+  document.getElementById('lolSearchForm').style.display = 'none';
+  document.getElementById('apexSearchForm').style.display= 'none';
   setGameButtons('');
-  _resetDropdownBadges();
   setNavActive('navBtnHome');
 }
 
@@ -1874,11 +1838,10 @@ let fnNewsLoaded = false;
 function showFnHome() {
   document.body.classList.add('is-home');
   hideAllSections();
-  document.getElementById('fnLandingArea').style.display    = 'block';
-  document.getElementById('searchForm').style.display       = 'none';
-  document.getElementById('lolSearchForm').style.display    = 'none';
-  document.getElementById('apexSearchForm').style.display   = 'none';
-  document.getElementById('navGamesDropdown').style.display = '';
+  document.getElementById('fnLandingArea').style.display  = 'block';
+  document.getElementById('searchForm').style.display     = 'none';
+  document.getElementById('lolSearchForm').style.display  = 'none';
+  document.getElementById('apexSearchForm').style.display = 'none';
   setGameButtons('fortnite');
   setNavActive('navBtnHome');
   if (!fnNewsLoaded) { fnNewsLoaded = true; loadHomeNews(); }
@@ -1886,7 +1849,6 @@ function showFnHome() {
 
 document.getElementById('navLogo').addEventListener('click', showHome);
 document.getElementById('navBtnHome').addEventListener('click', showHome);
-document.getElementById('navBtnPlayer').addEventListener('click', openSearchModal);
 document.getElementById('navBtnShop').addEventListener('click', () => {
   showGlobalSection('shop');
   loadShop();
@@ -1894,16 +1856,6 @@ document.getElementById('navBtnShop').addEventListener('click', () => {
 document.getElementById('navBtnMap').addEventListener('click', () => {
   showGlobalSection('map');
   loadMap();
-});
-
-// ── games dropdown ────────────────────────────────────────────────────────────
-const navGamesDropdown = document.getElementById('navGamesDropdown');
-document.getElementById('navGamesBtn').addEventListener('click', e => {
-  e.stopPropagation();
-  navGamesDropdown.classList.toggle('open');
-});
-document.addEventListener('click', e => {
-  if (!e.target.closest('#navGamesDropdown')) navGamesDropdown.classList.remove('open');
 });
 
 // ── switch to lifetime (called from warn-box button) ─────────────────────────
@@ -2042,38 +1994,19 @@ function setGameButtons(game) {
 }
 
 // ─── GAME SWITCHING ──────────────────────────────────────────────────────────
-function _resetDropdownBadges() {
-  [['Fn','fortnite'],['Lol','lol'],['Apex','apex']].forEach(([g, key]) => {
-    const el    = document.getElementById('navGame' + g);
-    const badge = document.getElementById('navGame' + g + 'Badge');
-    if (el)    { el.classList.remove('opt-active'); }
-    if (badge) { badge.className = 'nav-game-badge b-soon'; }
-  });
-}
-
 function switchToGame(game) {
   currentGame = game;
-  navGamesDropdown.classList.remove('open');
-  _resetDropdownBadges();
-
   document.body.classList.remove('game-lol', 'game-apex');
-
   if (game === 'lol') {
     document.body.classList.add('game-lol');
     setGameButtons('lol');
-    document.getElementById('navGameLol').classList.add('opt-active');
-    document.getElementById('navGameLolBadge').className = 'nav-game-badge b-active';
     showLolHome();
   } else if (game === 'apex') {
     document.body.classList.add('game-apex');
     setGameButtons('apex');
-    document.getElementById('navGameApex').classList.add('opt-active');
-    document.getElementById('navGameApexBadge').className = 'nav-game-badge b-active';
     showApexHome();
   } else {
     setGameButtons('fortnite');
-    document.getElementById('navGameFn').classList.add('opt-active');
-    document.getElementById('navGameFnBadge').className = 'nav-game-badge b-active';
     showFnHome();
   }
 }
@@ -2082,10 +2015,9 @@ function switchToGame(game) {
 function showLolHome() {
   document.body.classList.add('is-home');
   hideAllSections();
-  document.getElementById('lolLandingArea').style.display  = 'block';
-  document.getElementById('searchForm').style.display      = 'none';
-  document.getElementById('lolSearchForm').style.display   = 'none';
-  document.getElementById('navGamesDropdown').style.display = '';
+  document.getElementById('lolLandingArea').style.display = 'block';
+  document.getElementById('searchForm').style.display     = 'none';
+  document.getElementById('lolSearchForm').style.display  = 'none';
   setNavActive('navBtnHome');
   setLolNavActive(null);
   if (!getLolKey()) setTimeout(openLolKeyModal, 300);
@@ -2299,10 +2231,9 @@ async function lolSearch(name, region) {
   if (!name.trim()) return;
   document.body.classList.remove('is-home');
   hideAllSections();
-  document.getElementById('navGamesDropdown').style.display = '';
-  document.getElementById('lolSearchForm').style.display    = '';
+  document.getElementById('lolSearchForm').style.display = '';
   document.getElementById('lolTabStats').style.display      = 'block';
-  setLolNavActive('navBtnLolPlayer');
+  setLolNavActive(null);
   setNavActive(null);
 
   document.getElementById('lolOverallArea').innerHTML =
@@ -2388,7 +2319,6 @@ document.getElementById('lolModalForm').addEventListener('submit', e => {
 });
 
 // ─── LOL EVENT LISTENERS ─────────────────────────────────────────────────────
-document.getElementById('navBtnLolPlayer').addEventListener('click', openLolSearchModal);
 document.getElementById('navBtnLolRanked').addEventListener('click', () => {
   if (lolPlayer) { switchLolTab('stats'); } else openLolSearchModal();
 });
@@ -2566,11 +2496,10 @@ function switchApexTab(tab) {
 function showApexHome() {
   document.body.classList.add('is-home');
   hideAllSections();
-  document.getElementById('apexLandingArea').style.display   = 'block';
-  document.getElementById('searchForm').style.display        = 'none';
-  document.getElementById('lolSearchForm').style.display     = 'none';
-  document.getElementById('apexSearchForm').style.display    = 'none';
-  document.getElementById('navGamesDropdown').style.display  = '';
+  document.getElementById('apexLandingArea').style.display  = 'block';
+  document.getElementById('searchForm').style.display       = 'none';
+  document.getElementById('lolSearchForm').style.display    = 'none';
+  document.getElementById('apexSearchForm').style.display   = 'none';
   setGameButtons('apex');
   setNavActive('navBtnHome');
   setApexNavActive(null);
@@ -2587,11 +2516,10 @@ async function apexSearch(name, platform) {
   if (!name.trim()) return;
   document.body.classList.remove('is-home');
   hideAllSections();
-  document.getElementById('navGamesDropdown').style.display = '';
-  document.getElementById('apexSearchForm').style.display   = '';
+  document.getElementById('apexSearchForm').style.display = '';
   document.getElementById('apexTabStats').style.display     = 'block';
   setGameButtons('apex');
-  setApexNavActive('navBtnApexPlayer');
+  setApexNavActive(null);
   setNavActive(null);
 
   document.getElementById('apexOverallArea').innerHTML =
@@ -2672,7 +2600,6 @@ document.getElementById('apexModalForm').addEventListener('submit', e => {
 });
 
 // ─── APEX EVENT LISTENERS ─────────────────────────────────────────────────────
-document.getElementById('navBtnApexPlayer').addEventListener('click', openApexSearchModal);
 document.getElementById('apexHomeSearchForm').addEventListener('submit', e => {
   e.preventDefault();
   const name = document.getElementById('apexHomeSearchInput').value.trim();
