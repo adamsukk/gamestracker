@@ -568,6 +568,16 @@
 
     @media (max-width: 1000px) { .lol-queue-grid { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 540px)  { .lol-queue-grid { grid-template-columns: 1fr; } }
+
+    /* ─── LOL MASTERY ─── */
+    .mastery-grid { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .mastery-card { background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; align-items: center; width: 96px; transition: transform 0.15s, box-shadow 0.15s; }
+    .mastery-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+    .mastery-img  { width: 96px; height: 96px; object-fit: cover; display: block; background: var(--bg-card2); }
+    .mastery-info { padding: 7px 8px 9px; text-align: center; width: 100%; }
+    .mastery-name  { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mastery-level { font-size: 10px; color: var(--purple-mid); font-weight: 600; margin-top: 2px; letter-spacing: 0.06em; }
+    .mastery-pts   { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
   </style>
 </head>
 <body>
@@ -865,6 +875,7 @@
     </div>
     <div id="lolOverallArea"></div>
     <div id="lolQueuesArea"></div>
+    <div id="lolMasteryArea"></div>
   </div>
 
   <!-- LOL MATCH HISTORY TAB -->
@@ -1830,10 +1841,78 @@ function setLolNavActive(id) {
   if (id) document.getElementById(id)?.classList.add('active');
 }
 
-// ─── LOL API STUB ─────────────────────────────────────────────────────────────
+// ─── LOL API ──────────────────────────────────────────────────────────────────
+const LOL_API_KEY = 'RGAPI-8bb7c640-a91b-401e-8dae-224bb9ec0065';
+
+const PLATFORM_TO_REGIONAL = {
+  euw1:'europe', eun1:'europe', tr1:'europe', ru:'europe',
+  na1:'americas', br1:'americas', la1:'americas', la2:'americas',
+  kr:'asia', jp1:'asia',
+  oc1:'sea',
+};
+
+async function lolFetch(url) {
+  const sep = url.includes('?') ? '&' : '?';
+  const res  = await fetch(url + sep + 'api_key=' + LOL_API_KEY);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(res.status + ' — ' + (body?.status?.message || res.statusText));
+  return body;
+}
+
+// ─── DATA DRAGON ──────────────────────────────────────────────────────────────
+let _ddVer = null, _champById = null;
+
+async function getDDVersion() {
+  if (_ddVer) return _ddVer;
+  const vers = await fetch('https://ddragon.leagueoflegends.com/api/versions.json').then(r => r.json());
+  _ddVer = vers[0];
+  return _ddVer;
+}
+
+async function getChampById() {
+  if (_champById) return _champById;
+  const ver  = await getDDVersion();
+  const data = await fetch(`https://ddragon.leagueoflegends.com/cdn/${ver}/data/en_US/champion.json`).then(r => r.json());
+  _champById = {};
+  for (const c of Object.values(data.data)) _champById[String(c.key)] = c;
+  return _champById;
+}
+
 async function fetchLolStats(name, region) {
-  // Will be implemented once API key is provided
-  throw new Error('League of Legends API not yet configured — send the API details to enable live stats.');
+  const base     = `https://${region}.api.riotgames.com`;
+  const regional = PLATFORM_TO_REGIONAL[region] || 'europe';
+  let summoner;
+
+  if (name.includes('#')) {
+    const [gameName, tagLine] = name.split('#');
+    const account = await lolFetch(`https://${regional}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`);
+    summoner = await lolFetch(`${base}/lol/summoner/v4/summoners/by-puuid/${account.puuid}`);
+    summoner._displayName = `${account.gameName}#${account.tagLine}`;
+  } else {
+    summoner = await lolFetch(`${base}/lol/summoner/v4/summoners/by-name/${encodeURIComponent(name)}`);
+  }
+
+  const [rankedData, masteryData, ddVer] = await Promise.all([
+    lolFetch(`${base}/lol/league/v4/entries/by-summoner/${summoner.id}`),
+    lolFetch(`${base}/lol/champion-mastery/v4/champion-masteries/by-summoner/${summoner.id}/top?count=7`),
+    getDDVersion(),
+  ]);
+
+  const ranked = {};
+  for (const e of rankedData) {
+    const q = e.queueType === 'RANKED_SOLO_5x5' ? 'solo' : e.queueType === 'RANKED_FLEX_SR' ? 'flex' : null;
+    if (q) ranked[q] = { tier: e.tier, rank: e.rank, lp: e.leaguePoints, wins: e.wins, losses: e.losses };
+  }
+
+  return {
+    name:    summoner._displayName || summoner.name,
+    level:   summoner.summonerLevel,
+    iconId:  summoner.profileIconId,
+    puuid:   summoner.puuid,
+    ranked,
+    mastery: masteryData,
+    ddVer,
+  };
 }
 
 // ─── LOL RENDER PROFILE ───────────────────────────────────────────────────────
@@ -1855,33 +1934,67 @@ function renderLolProfile(name, region, data) {
 }
 
 // ─── LOL RENDER STATS ─────────────────────────────────────────────────────────
-function renderLolStats(data) {
+async function renderLolStats(data) {
   const ranked = data?.ranked || {};
   const solo   = ranked.solo;
   const flex   = ranked.flex;
-
   const safeWr = (w, l) => (w + l > 0) ? fmtPct(w / (w + l) * 100) : '—';
+
+  const iconUrl = data.iconId
+    ? `https://ddragon.leagueoflegends.com/cdn/${data.ddVer}/img/profileicon/${data.iconId}.png`
+    : null;
+  if (iconUrl) {
+    const avatarEl = document.getElementById('lolAvatarInitials');
+    avatarEl.innerHTML = `<img src="${iconUrl}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:13px">`;
+  }
 
   document.getElementById('lolOverallArea').innerHTML = `
     <div class="stats-overall">
-      ${statCard('Solo Rank',  solo ? `${solo.tier} ${solo.rank}` : '—',        solo ? solo.lp + ' LP' : 'Unranked')}
+      ${statCard('Solo Rank',  solo ? `${solo.tier} ${solo.rank}` : '—',  solo ? solo.lp + ' LP' : 'Unranked')}
       ${statCard('Solo W/L',   solo ? fmt(solo.wins) + 'W / ' + fmt(solo.losses) + 'L' : '—', solo ? safeWr(solo.wins, solo.losses) + ' WR' : null)}
-      ${statCard('Flex Rank',  flex ? `${flex.tier} ${flex.rank}` : '—',        flex ? flex.lp + ' LP' : 'Unranked')}
+      ${statCard('Flex Rank',  flex ? `${flex.tier} ${flex.rank}` : '—',  flex ? flex.lp + ' LP' : 'Unranked')}
       ${statCard('Flex W/L',   flex ? fmt(flex.wins) + 'W / ' + fmt(flex.losses) + 'L' : '—', flex ? safeWr(flex.wins, flex.losses) + ' WR' : null)}
       ${statCard('Level',      fmt(data?.level), null)}
-      ${statCard('Peak',       solo?.highestTier ? solo.highestTier : '—', null)}
+      ${statCard('Total Games', solo ? fmt(solo.wins + solo.losses) : '—', 'solo queue')}
     </div>`;
 
-  const queues = [
-    { name: 'Solo / Duo Queue', d: ranked.solo },
-    { name: 'Flex Queue',       d: ranked.flex },
-    { name: 'Arena',            d: ranked.arena },
-  ];
   document.getElementById('lolQueuesArea').innerHTML = `
     <div class="modes-label" style="margin-top:8px">By Queue</div>
     <div class="lol-queue-grid">
-      ${queues.map(q => lolQueueCard(q.name, q.d)).join('')}
+      ${lolQueueCard('Solo / Duo', solo)}
+      ${lolQueueCard('Flex 5v5',   flex)}
     </div>`;
+
+  // Champion mastery
+  const masteryEl = document.getElementById('lolMasteryArea');
+  if (data.mastery?.length) {
+    masteryEl.innerHTML = `<div class="modes-label" style="margin-top:24px">Champion Mastery</div><div class="mastery-grid"><div class="loading-text" style="padding:12px 0;font-size:13px">Loading champions…</div></div>`;
+    try {
+      const champMap = await getChampById();
+      masteryEl.innerHTML = `
+        <div class="modes-label" style="margin-top:24px">Champion Mastery</div>
+        <div class="mastery-grid">
+          ${data.mastery.map(m => {
+            const champ = champMap[String(m.championId)];
+            const name  = champ?.name || 'Unknown';
+            const img   = champ ? `https://ddragon.leagueoflegends.com/cdn/${data.ddVer}/img/champion/${champ.image.full}` : '';
+            const pts   = m.championPoints >= 1000 ? (m.championPoints / 1000).toFixed(0) + 'k' : m.championPoints;
+            return `<div class="mastery-card">
+              ${img ? `<img class="mastery-img" src="${img}" alt="${name}" loading="lazy">` : `<div class="mastery-img" style="display:flex;align-items:center;justify-content:center;font-size:28px">⚔️</div>`}
+              <div class="mastery-info">
+                <div class="mastery-name">${name}</div>
+                <div class="mastery-level">M${m.championLevel}</div>
+                <div class="mastery-pts">${pts} pts</div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`;
+    } catch {
+      masteryEl.innerHTML = '';
+    }
+  } else {
+    masteryEl.innerHTML = '';
+  }
 }
 
 function lolQueueCard(name, d) {
@@ -1930,7 +2043,7 @@ async function lolSearch(name, region) {
     lolPlayer = data?.name || name;
     lolRegion = region;
     renderLolProfile(lolPlayer, region, data);
-    renderLolStats(data);
+    await renderLolStats(data);
     document.getElementById('lolSearchInput').value    = lolPlayer;
     document.getElementById('lolRegionSelect').value   = region;
   } catch (err) {
