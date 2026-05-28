@@ -499,6 +499,75 @@
       .home-news-grid{ grid-template-columns: 1fr; }
       .home-search-form .btn-search { width: 100%; }
     }
+
+    /* ─── LOL THEME ─── */
+    body.game-lol {
+      --purple:       #dc2626;
+      --purple-light: #fca5a5;
+      --purple-mid:   #f87171;
+      --border:       rgba(220,38,38,0.18);
+    }
+    body.game-lol .hero {
+      background: radial-gradient(ellipse 90% 140% at 50% 0%, rgba(220,38,38,0.45) 0%, transparent 70%);
+    }
+    body.game-lol .hero-grid {
+      background-image:
+        linear-gradient(rgba(220,38,38,0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(220,38,38,0.10) 1px, transparent 1px);
+    }
+    body.game-lol .avatar {
+      background: linear-gradient(135deg, #dc2626, #7f1d1d);
+      border-color: rgba(252,165,165,0.35);
+      box-shadow: 0 8px 32px rgba(220,38,38,0.45);
+    }
+    body.game-lol .ps-avatar {
+      background: linear-gradient(135deg, #dc2626, #7f1d1d);
+      border-color: rgba(252,165,165,0.25);
+    }
+    body.game-lol .home-grid-bg {
+      background-image:
+        radial-gradient(ellipse 100% 60% at 50% 0%, rgba(220,38,38,0.40) 0%, transparent 70%),
+        linear-gradient(rgba(220,38,38,0.09) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(220,38,38,0.09) 1px, transparent 1px);
+    }
+    body.game-lol .home-search-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(220,38,38,0.15); }
+    body.game-lol .spinner              { border-top-color: var(--purple); }
+    body.game-lol .lb-table tr.me td    { background: rgba(220,38,38,0.08); }
+    body.game-lol .lb-sort-btn.active   { background: rgba(220,38,38,0.2); color: var(--purple-light); border-color: var(--purple); }
+    body.game-lol .nav-game-opt:hover   { background: rgba(220,38,38,0.10); }
+    body.game-lol .map-poi-item:hover   { background: rgba(220,38,38,0.10); }
+    body.game-lol .map-poi-item.active  { background: rgba(220,38,38,0.18); color: var(--purple-light); border-color: rgba(220,38,38,0.35); }
+    body.game-lol .ps-card:hover        { border-color: var(--purple); background: rgba(220,38,38,0.08); }
+    body.game-lol .btn-refresh:hover    { background: rgba(220,38,38,0.12); color: var(--purple-light); border-color: var(--purple); }
+    body.game-lol .game-card.game-active { border-color: rgba(220,38,38,0.6); background: rgba(220,38,38,0.10); box-shadow: 0 0 20px rgba(220,38,38,0.15); }
+    body.game-lol .game-card.game-active .game-status-badge { color: var(--purple-mid); background: rgba(220,38,38,0.18); }
+    body.game-lol .modal-submit         { background: var(--purple); }
+
+    /* ─── LOL RANK COLORS ─── */
+    .rank-challenger  { color: #fbbf24; }
+    .rank-grandmaster { color: #f87171; }
+    .rank-master      { color: #c084fc; }
+    .rank-diamond     { color: #60a5fa; }
+    .rank-emerald     { color: #34d399; }
+    .rank-platinum    { color: #4ade80; }
+    .rank-gold        { color: #fbbf24; }
+    .rank-silver      { color: #94a3b8; }
+    .rank-bronze      { color: #cd7c54; }
+    .rank-iron        { color: #8B7355; }
+
+    /* ─── LOL QUEUE CARDS ─── */
+    .lol-queue-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+    .lol-queue-card { background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: 12px; padding: 18px; }
+    .lol-queue-name { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+    .lol-rank-badge { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1; }
+    .lol-lp         { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+    .lol-wl         { display: flex; gap: 12px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-soft); font-size: 13px; color: var(--text-muted); align-items: center; }
+    .lol-wl-win     { color: var(--green); font-weight: 600; font-family: var(--font-display); font-size: 16px; }
+    .lol-wl-loss    { color: var(--red); font-weight: 600; font-family: var(--font-display); font-size: 16px; }
+    .lol-queue-card.no-data { opacity: 0.5; }
+
+    @media (max-width: 1000px) { .lol-queue-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 540px)  { .lol-queue-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -509,9 +578,12 @@
   <div class="nav-sep"></div>
   <nav class="nav-menu">
     <button class="nav-menu-btn active" id="navBtnHome">Home</button>
-    <button class="nav-menu-btn" id="navBtnPlayer">Player Stats</button>
-    <button class="nav-menu-btn" id="navBtnShop">Item Shop</button>
-    <button class="nav-menu-btn" id="navBtnMap">Map</button>
+    <button class="nav-menu-btn fn-btn" id="navBtnPlayer">Player Stats</button>
+    <button class="nav-menu-btn fn-btn" id="navBtnShop">Item Shop</button>
+    <button class="nav-menu-btn fn-btn" id="navBtnMap">Map</button>
+    <button class="nav-menu-btn lol-btn" id="navBtnLolPlayer" style="display:none">Player Stats</button>
+    <button class="nav-menu-btn lol-btn" id="navBtnLolRanked" style="display:none">Ranked</button>
+    <button class="nav-menu-btn lol-btn" id="navBtnLolHistory" style="display:none">Match History</button>
   </nav>
   <div class="nav-games-dropdown" id="navGamesDropdown" style="display:none">
     <button class="nav-games-btn" id="navGamesBtn" type="button">
@@ -519,9 +591,13 @@
       <svg class="nav-games-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="nav-games-panel" id="navGamesPanel">
-      <div class="nav-game-opt opt-active">
+      <div class="nav-game-opt opt-active" id="navGameFn" style="cursor:pointer" onclick="switchToGame('fortnite')">
         <div class="nav-game-label">🏆 Fortnite</div>
-        <span class="nav-game-badge b-active">Active</span>
+        <span class="nav-game-badge b-active" id="navGameFnBadge">Active</span>
+      </div>
+      <div class="nav-game-opt" id="navGameLol" style="cursor:pointer" onclick="switchToGame('lol')">
+        <div class="nav-game-label">⚔️ League of Legends</div>
+        <span class="nav-game-badge b-soon" id="navGameLolBadge">Active</span>
       </div>
       <div class="nav-game-opt opt-soon">
         <div class="nav-game-label">🎯 Valorant</div>
@@ -549,6 +625,26 @@
     </select>
     <button class="btn-search" id="btnSearch" type="submit">Search</button>
   </form>
+  <form class="search-form" id="lolSearchForm" autocomplete="off" style="display:none">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" id="lolSearchInput" type="text" placeholder="Summoner name…" spellcheck="false">
+    </div>
+    <select class="platform-select" id="lolRegionSelect">
+      <option value="euw1">EUW</option>
+      <option value="eun1">EUNE</option>
+      <option value="na1">NA</option>
+      <option value="kr">KR</option>
+      <option value="br1">BR</option>
+      <option value="jp1">JP</option>
+      <option value="oc1">OCE</option>
+      <option value="tr1">TR</option>
+      <option value="ru">RU</option>
+      <option value="la1">LAN</option>
+      <option value="la2">LAS</option>
+    </select>
+    <button class="btn-search" id="btnLolSearch" type="submit">Search</button>
+  </form>
 </nav>
 
 <!-- HERO -->
@@ -569,11 +665,33 @@
   </div>
 </div>
 
-<!-- TAB NAV -->
+<!-- TAB NAV (Fortnite) -->
 <div class="tab-nav" id="tabNav" style="display:none">
   <button class="tab-btn active" data-tab="stats">Stats</button>
   <button class="tab-btn" data-tab="events">Events</button>
   <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
+</div>
+
+<!-- LOL PROFILE -->
+<div class="profile-outer" id="lolProfileOuter" style="display:none">
+  <div class="profile-card">
+    <div class="avatar" id="lolAvatarInitials">--</div>
+    <div class="profile-info">
+      <div class="profile-name" id="lolProfileName"></div>
+      <div class="profile-meta">
+        <span class="badge badge-platform" id="lolRegionBadge"></span>
+        <span class="badge badge-bp"        id="lolLevelBadge" style="display:none"></span>
+        <span class="badge badge-updated"   id="lolRankBadge"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOL TAB NAV -->
+<div class="tab-nav" id="lolTabNav" style="display:none">
+  <button class="tab-btn active" data-loltab="stats">Stats</button>
+  <button class="tab-btn" data-loltab="history">Match History</button>
+  <button class="tab-btn" data-loltab="champions">Champions</button>
 </div>
 
 <!-- MAIN -->
@@ -604,9 +722,14 @@
     <div class="home-section centered">
       <div class="home-section-label">Select Game</div>
       <div class="game-cards">
-        <div class="game-card game-active">
+        <div class="game-card game-active" id="gameCardFn" style="cursor:pointer" onclick="switchToGame('fortnite')">
           <div class="game-icon-wrap">🏆</div>
           <div class="game-name">Fortnite</div>
+          <div class="game-status-badge">Active</div>
+        </div>
+        <div class="game-card game-active" id="gameCardLol" style="cursor:pointer" onclick="switchToGame('lol')">
+          <div class="game-icon-wrap">⚔️</div>
+          <div class="game-name">League</div>
           <div class="game-status-badge">Active</div>
         </div>
         <div class="game-card game-soon">
@@ -696,6 +819,72 @@
   <!-- PLAYER SELECT (multi-platform results) -->
   <div id="playerSelectArea" style="display:none"></div>
 
+  <!-- LOL LANDING -->
+  <div id="lolLandingArea" style="display:none">
+    <div class="home-grid-bg" aria-hidden="true"></div>
+    <div class="home-hero">
+      <div class="home-title">LEAGUE<span>·</span>TRACKER</div>
+      <div class="home-subtitle">Real-time League of Legends ranked stats, match history &amp; more</div>
+      <div class="home-search-row">
+        <form class="home-search-form" id="lolHomeSearchForm" autocomplete="off">
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input class="home-search-input" id="lolHomeSearchInput" type="text" placeholder="Search summoner name…" spellcheck="false">
+          </div>
+          <select class="platform-select" id="lolHomeRegionSelect">
+            <option value="euw1">EUW</option>
+            <option value="eun1">EUNE</option>
+            <option value="na1">NA</option>
+            <option value="kr">KR</option>
+            <option value="br1">BR</option>
+            <option value="jp1">JP</option>
+            <option value="oc1">OCE</option>
+            <option value="tr1">TR</option>
+            <option value="ru">RU</option>
+            <option value="la1">LAN</option>
+            <option value="la2">LAS</option>
+          </select>
+          <button class="btn-search" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+    <div class="home-section centered">
+      <div class="home-section-label">Recent</div>
+      <div style="color:var(--text-muted);font-size:14px;padding:24px 0">Search for a summoner to see their stats here.</div>
+    </div>
+  </div>
+
+  <!-- LOL STATS TAB -->
+  <div id="lolTabStats" style="display:none">
+    <div class="controls">
+      <span class="section-label">Summoner Stats</span>
+      <button class="btn-refresh" id="lolBtnRefresh" title="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Refresh
+      </button>
+    </div>
+    <div id="lolOverallArea"></div>
+    <div id="lolQueuesArea"></div>
+  </div>
+
+  <!-- LOL MATCH HISTORY TAB -->
+  <div id="lolTabHistory" style="display:none">
+    <div class="landing">
+      <div class="landing-icon">📋</div>
+      <div class="landing-title">Match History</div>
+      <div class="landing-sub">Coming soon — API integration in progress.</div>
+    </div>
+  </div>
+
+  <!-- LOL CHAMPIONS TAB -->
+  <div id="lolTabChampions" style="display:none">
+    <div class="landing">
+      <div class="landing-icon">🗡️</div>
+      <div class="landing-title">Champion Mastery</div>
+      <div class="landing-sub">Coming soon — API integration in progress.</div>
+    </div>
+  </div>
+
   <!-- LEADERBOARD TAB -->
   <div id="tabLeaderboard" style="display:none">
     <div class="lb-header">
@@ -712,6 +901,42 @@
     </div>
   </div>
 
+</div>
+
+<!-- LOL SEARCH MODAL -->
+<div id="lolSearchModal" class="modal-overlay" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">Search Summoner</div>
+      <button class="modal-close" id="lolModalClose">&#x2715;</button>
+    </div>
+    <form class="modal-body" id="lolModalForm" autocomplete="off">
+      <div>
+        <div class="modal-label">Summoner Name</div>
+        <div class="modal-input-wrap search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input class="modal-search-input" id="lolModalInput" type="text" placeholder="Enter summoner name…" spellcheck="false">
+        </div>
+      </div>
+      <div>
+        <div class="modal-label">Region</div>
+        <select class="modal-platform" id="lolModalRegion">
+          <option value="euw1">EUW — Europe West</option>
+          <option value="eun1">EUNE — Europe Nordic &amp; East</option>
+          <option value="na1">NA — North America</option>
+          <option value="kr">KR — Korea</option>
+          <option value="br1">BR — Brazil</option>
+          <option value="jp1">JP — Japan</option>
+          <option value="oc1">OCE — Oceania</option>
+          <option value="tr1">TR — Turkey</option>
+          <option value="ru">RU — Russia</option>
+          <option value="la1">LAN — Latin America North</option>
+          <option value="la2">LAS — Latin America South</option>
+        </select>
+      </div>
+      <button class="modal-submit" type="submit">Search</button>
+    </form>
+  </div>
 </div>
 
 <!-- SEARCH MODAL -->
@@ -1200,17 +1425,10 @@ async function loadShop() {
 // ── multi-platform player search + select ────────────────────────────────────
 function _showSearchUI(name) {
   document.body.classList.remove('is-home');
+  hideAllSections();
   const psa = document.getElementById('playerSelectArea');
   document.getElementById('searchForm').style.display       = '';
   document.getElementById('navGamesDropdown').style.display = '';
-  document.getElementById('landingArea').style.display      = 'none';
-  document.getElementById('profileOuter').style.display     = 'none';
-  document.getElementById('tabNav').style.display           = 'none';
-  document.getElementById('tabStats').style.display         = 'none';
-  document.getElementById('tabEvents').style.display        = 'none';
-  document.getElementById('tabLeaderboard').style.display   = 'none';
-  document.getElementById('tabShop').style.display          = 'none';
-  document.getElementById('tabMap').style.display           = 'none';
   psa.style.display = 'block';
   psa.innerHTML = `<div class="loading-screen"><div class="spinner"></div><div class="loading-text">Searching for <strong>${name}</strong>…</div></div>`;
   return psa;
@@ -1331,17 +1549,11 @@ document.getElementById('playerSelectArea').addEventListener('click', e => {
 // ── global sections (shop / map — no player needed) ───────────────────────────
 function showGlobalSection(section) {
   document.body.classList.remove('is-home');
+  hideAllSections();
   document.getElementById('searchForm').style.display       = '';
   document.getElementById('navGamesDropdown').style.display = '';
-  document.getElementById('playerSelectArea').style.display = 'none';
-  document.getElementById('landingArea').style.display      = 'none';
-  document.getElementById('profileOuter').style.display  = 'none';
-  document.getElementById('tabNav').style.display        = 'none';
-  document.getElementById('tabStats').style.display      = 'none';
-  document.getElementById('tabEvents').style.display     = 'none';
-  document.getElementById('tabLeaderboard').style.display= 'none';
-  document.getElementById('tabShop').style.display       = section === 'shop' ? 'block' : 'none';
-  document.getElementById('tabMap').style.display        = section === 'map'  ? 'block' : 'none';
+  document.getElementById('tabShop').style.display = section === 'shop' ? 'block' : 'none';
+  document.getElementById('tabMap').style.display  = section === 'map'  ? 'block' : 'none';
   setNavActive(section === 'shop' ? 'navBtnShop' : 'navBtnMap');
 }
 
@@ -1356,12 +1568,9 @@ async function load(name, platform, timeWindow) {
   if (!name.trim()) return;
   document.body.classList.remove('is-home');
   setLoading(true);
+  hideAllSections();
   document.getElementById('searchForm').style.display       = '';
   document.getElementById('navGamesDropdown').style.display = '';
-  document.getElementById('playerSelectArea').style.display = 'none';
-  document.getElementById('landingArea').style.display      = 'none';
-  document.getElementById('tabShop').style.display     = 'none';
-  document.getElementById('tabMap').style.display      = 'none';
   document.getElementById('tabStats').style.display    = activeTab === 'stats' ? 'block' : 'none';
   document.getElementById('overallArea').innerHTML =
     `<div class="loading-screen"><div class="spinner"></div><div class="loading-text">Searching <strong>${name}</strong>…</div></div>`;
@@ -1413,22 +1622,21 @@ async function load(name, platform, timeWindow) {
 // ── nav menu ──────────────────────────────────────────────────────────────────
 function setNavActive(id) {
   document.querySelectorAll('.nav-menu-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id)?.classList.add('active');
+  if (id) document.getElementById(id)?.classList.add('active');
 }
 
 function showHome() {
+  if (currentGame === 'lol') { showLolHome(); return; }
+  showFnHome();
+}
+
+function showFnHome() {
   document.body.classList.add('is-home');
-  document.getElementById('searchForm').style.display       = 'none';
-  document.getElementById('navGamesDropdown').style.display = 'none';
-  document.getElementById('playerSelectArea').style.display = 'none';
+  hideAllSections();
   document.getElementById('landingArea').style.display      = 'block';
-  document.getElementById('profileOuter').style.display     = 'none';
-  document.getElementById('tabNav').style.display           = 'none';
-  document.getElementById('tabStats').style.display         = 'none';
-  document.getElementById('tabEvents').style.display        = 'none';
-  document.getElementById('tabLeaderboard').style.display   = 'none';
-  document.getElementById('tabShop').style.display          = 'none';
-  document.getElementById('tabMap').style.display           = 'none';
+  document.getElementById('searchForm').style.display       = 'none';
+  document.getElementById('lolSearchForm').style.display    = 'none';
+  document.getElementById('navGamesDropdown').style.display = 'none';
   setNavActive('navBtnHome');
 }
 
@@ -1558,6 +1766,236 @@ document.getElementById('modalForm').addEventListener('submit', e => {
   if (!name || isLoading) return;
   closeSearchModal();
   searchAndSelect(name, document.getElementById('modalPlatform').value);
+});
+
+// ─── LOL STATE ───────────────────────────────────────────────────────────────
+let currentGame  = 'fortnite';
+let lolPlayer    = '';
+let lolRegion    = 'euw1';
+let lolActiveTab = 'stats';
+
+// ─── LOL HELPERS ──────────────────────────────────────────────────────────────
+const regionLabel = r => ({ euw1:'EUW', eun1:'EUNE', na1:'NA', kr:'KR', br1:'BR', jp1:'JP', oc1:'OCE', tr1:'TR', ru:'RU', la1:'LAN', la2:'LAS' }[r] || r.toUpperCase());
+
+// ─── HIDE ALL SECTIONS ────────────────────────────────────────────────────────
+function hideAllSections() {
+  ['landingArea','profileOuter','tabNav','tabStats','tabEvents','tabLeaderboard','tabShop','tabMap',
+   'lolLandingArea','lolProfileOuter','lolTabNav','lolTabStats','lolTabHistory','lolTabChampions',
+   'playerSelectArea'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+}
+
+// ─── GAME SWITCHING ──────────────────────────────────────────────────────────
+function switchToGame(game) {
+  currentGame = game;
+  navGamesDropdown.classList.remove('open');
+
+  if (game === 'lol') {
+    document.body.classList.add('game-lol');
+    document.querySelectorAll('.fn-btn').forEach(b => b.style.display = 'none');
+    document.querySelectorAll('.lol-btn').forEach(b => b.style.display = '');
+    document.getElementById('navGameFn').classList.remove('opt-active');
+    document.getElementById('navGameFnBadge').className = 'nav-game-badge b-soon';
+    document.getElementById('navGameLol').classList.add('opt-active');
+    document.getElementById('navGameLolBadge').className = 'nav-game-badge b-active';
+    showLolHome();
+  } else {
+    document.body.classList.remove('game-lol');
+    document.querySelectorAll('.lol-btn').forEach(b => b.style.display = 'none');
+    document.querySelectorAll('.fn-btn').forEach(b => b.style.display = '');
+    document.getElementById('navGameLol').classList.remove('opt-active');
+    document.getElementById('navGameLolBadge').className = 'nav-game-badge b-soon';
+    document.getElementById('navGameFn').classList.add('opt-active');
+    document.getElementById('navGameFnBadge').className = 'nav-game-badge b-active';
+    showFnHome();
+  }
+}
+
+// ─── LOL HOME ─────────────────────────────────────────────────────────────────
+function showLolHome() {
+  document.body.classList.add('is-home');
+  hideAllSections();
+  document.getElementById('lolLandingArea').style.display  = 'block';
+  document.getElementById('searchForm').style.display      = 'none';
+  document.getElementById('lolSearchForm').style.display   = 'none';
+  document.getElementById('navGamesDropdown').style.display = '';
+  setNavActive('navBtnHome');
+  setLolNavActive(null);
+}
+
+function setLolNavActive(id) {
+  document.querySelectorAll('.lol-btn').forEach(b => b.classList.remove('active'));
+  if (id) document.getElementById(id)?.classList.add('active');
+}
+
+// ─── LOL API STUB ─────────────────────────────────────────────────────────────
+async function fetchLolStats(name, region) {
+  // Will be implemented once API key is provided
+  throw new Error('League of Legends API not yet configured — send the API details to enable live stats.');
+}
+
+// ─── LOL RENDER PROFILE ───────────────────────────────────────────────────────
+function renderLolProfile(name, region, data) {
+  document.getElementById('lolProfileOuter').style.display = 'block';
+  document.getElementById('lolTabNav').style.display       = 'flex';
+  document.getElementById('lolProfileName').textContent    = data?.name || name;
+  document.getElementById('lolAvatarInitials').textContent = initials(data?.name || name);
+  document.getElementById('lolRegionBadge').textContent    = regionLabel(region);
+
+  const lvl = data?.level;
+  const lvlEl = document.getElementById('lolLevelBadge');
+  if (lvl) { lvlEl.textContent = 'Level ' + lvl; lvlEl.style.display = ''; }
+  else lvlEl.style.display = 'none';
+
+  const solo = data?.ranked?.solo;
+  const rankEl = document.getElementById('lolRankBadge');
+  rankEl.textContent = solo ? `${solo.tier} ${solo.rank} · ${solo.lp} LP` : 'Unranked';
+}
+
+// ─── LOL RENDER STATS ─────────────────────────────────────────────────────────
+function renderLolStats(data) {
+  const ranked = data?.ranked || {};
+  const solo   = ranked.solo;
+  const flex   = ranked.flex;
+
+  const safeWr = (w, l) => (w + l > 0) ? fmtPct(w / (w + l) * 100) : '—';
+
+  document.getElementById('lolOverallArea').innerHTML = `
+    <div class="stats-overall">
+      ${statCard('Solo Rank',  solo ? `${solo.tier} ${solo.rank}` : '—',        solo ? solo.lp + ' LP' : 'Unranked')}
+      ${statCard('Solo W/L',   solo ? fmt(solo.wins) + 'W / ' + fmt(solo.losses) + 'L' : '—', solo ? safeWr(solo.wins, solo.losses) + ' WR' : null)}
+      ${statCard('Flex Rank',  flex ? `${flex.tier} ${flex.rank}` : '—',        flex ? flex.lp + ' LP' : 'Unranked')}
+      ${statCard('Flex W/L',   flex ? fmt(flex.wins) + 'W / ' + fmt(flex.losses) + 'L' : '—', flex ? safeWr(flex.wins, flex.losses) + ' WR' : null)}
+      ${statCard('Level',      fmt(data?.level), null)}
+      ${statCard('Peak',       solo?.highestTier ? solo.highestTier : '—', null)}
+    </div>`;
+
+  const queues = [
+    { name: 'Solo / Duo Queue', d: ranked.solo },
+    { name: 'Flex Queue',       d: ranked.flex },
+    { name: 'Arena',            d: ranked.arena },
+  ];
+  document.getElementById('lolQueuesArea').innerHTML = `
+    <div class="modes-label" style="margin-top:8px">By Queue</div>
+    <div class="lol-queue-grid">
+      ${queues.map(q => lolQueueCard(q.name, q.d)).join('')}
+    </div>`;
+}
+
+function lolQueueCard(name, d) {
+  if (!d) return `<div class="lol-queue-card no-data"><div class="lol-queue-name">${name}</div><div class="no-data-label">Unranked</div></div>`;
+  const tierCap = d.tier ? d.tier.charAt(0) + d.tier.slice(1).toLowerCase() : '—';
+  const rankCls = 'rank-' + (d.tier?.toLowerCase() || 'iron');
+  const wr      = d.wins + d.losses > 0 ? ((d.wins / (d.wins + d.losses)) * 100).toFixed(1) + '%' : '—';
+  return `<div class="lol-queue-card">
+    <div class="lol-queue-name">${name}</div>
+    <div class="lol-rank-badge ${rankCls}">${tierCap} ${d.rank || ''}</div>
+    <div class="lol-lp">${fmt(d.lp)} LP</div>
+    <div class="lol-wl">
+      <span class="lol-wl-win">${fmt(d.wins)}W</span>
+      <span class="lol-wl-loss">${fmt(d.losses)}L</span>
+      <span>${wr} WR</span>
+    </div>
+  </div>`;
+}
+
+// ─── LOL TAB SWITCH ───────────────────────────────────────────────────────────
+function switchLolTab(tab) {
+  lolActiveTab = tab;
+  document.querySelectorAll('[data-loltab]').forEach(b => b.classList.toggle('active', b.dataset.loltab === tab));
+  document.getElementById('lolTabStats').style.display     = tab === 'stats'     ? 'block' : 'none';
+  document.getElementById('lolTabHistory').style.display   = tab === 'history'   ? 'block' : 'none';
+  document.getElementById('lolTabChampions').style.display = tab === 'champions' ? 'block' : 'none';
+}
+
+// ─── LOL SEARCH ──────────────────────────────────────────────────────────────
+async function lolSearch(name, region) {
+  if (!name.trim()) return;
+  document.body.classList.remove('is-home');
+  hideAllSections();
+  document.getElementById('navGamesDropdown').style.display = '';
+  document.getElementById('lolSearchForm').style.display    = '';
+  document.getElementById('lolTabStats').style.display      = 'block';
+  setLolNavActive('navBtnLolPlayer');
+  setNavActive(null);
+
+  document.getElementById('lolOverallArea').innerHTML =
+    `<div class="loading-screen"><div class="spinner"></div><div class="loading-text">Searching <strong>${name}</strong>…</div></div>`;
+  document.getElementById('lolQueuesArea').innerHTML = '';
+
+  try {
+    const data = await fetchLolStats(name, region);
+    lolPlayer = data?.name || name;
+    lolRegion = region;
+    renderLolProfile(lolPlayer, region, data);
+    renderLolStats(data);
+    document.getElementById('lolSearchInput').value    = lolPlayer;
+    document.getElementById('lolRegionSelect').value   = region;
+  } catch (err) {
+    document.getElementById('lolProfileOuter').style.display = 'none';
+    document.getElementById('lolTabNav').style.display       = 'none';
+    document.getElementById('lolOverallArea').innerHTML = `
+      <div class="warn-box">
+        <div class="warn-title">Stats Not Available</div>
+        <div class="warn-msg">${err.message}</div>
+      </div>`;
+  }
+}
+
+// ─── LOL MODAL ───────────────────────────────────────────────────────────────
+function openLolSearchModal() {
+  const modal = document.getElementById('lolSearchModal');
+  modal.style.display = 'flex';
+  const inp = document.getElementById('lolModalInput');
+  inp.value = lolPlayer || '';
+  document.getElementById('lolModalRegion').value = lolRegion;
+  setTimeout(() => { inp.focus(); inp.select(); }, 40);
+}
+function closeLolSearchModal() {
+  document.getElementById('lolSearchModal').style.display = 'none';
+}
+document.getElementById('lolModalClose').addEventListener('click', closeLolSearchModal);
+document.getElementById('lolSearchModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeLolSearchModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('lolSearchModal').style.display === 'flex') closeLolSearchModal();
+});
+document.getElementById('lolModalForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('lolModalInput').value.trim();
+  if (!name) return;
+  closeLolSearchModal();
+  lolSearch(name, document.getElementById('lolModalRegion').value);
+});
+
+// ─── LOL EVENT LISTENERS ─────────────────────────────────────────────────────
+document.getElementById('navBtnLolPlayer').addEventListener('click', openLolSearchModal);
+document.getElementById('navBtnLolRanked').addEventListener('click', () => {
+  if (lolPlayer) { switchLolTab('stats'); } else openLolSearchModal();
+});
+document.getElementById('navBtnLolHistory').addEventListener('click', () => {
+  if (lolPlayer) { switchLolTab('history'); } else openLolSearchModal();
+});
+document.getElementById('lolHomeSearchForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('lolHomeSearchInput').value.trim();
+  if (!name) return;
+  lolSearch(name, document.getElementById('lolHomeRegionSelect').value);
+});
+document.getElementById('lolSearchForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('lolSearchInput').value.trim();
+  if (!name) return;
+  lolSearch(name, document.getElementById('lolRegionSelect').value);
+});
+document.getElementById('lolBtnRefresh').addEventListener('click', () => {
+  if (lolPlayer) lolSearch(lolPlayer, lolRegion);
+});
+document.querySelectorAll('[data-loltab]').forEach(btn => {
+  btn.addEventListener('click', () => switchLolTab(btn.dataset.loltab));
 });
 
 // ── init ──────────────────────────────────────────────────────────────────────
